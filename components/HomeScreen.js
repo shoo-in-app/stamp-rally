@@ -9,15 +9,20 @@ export default class HomeScreen extends React.Component {
       list: []
     };
   }
+
+  static navigationOptions = {
+    title: "Stamp Rallies"
+  };
+
   componentDidMount() {
     return fetch("https://cc4-flower-dev.herokuapp.com/rallies")
       .then((response) => response.json())
       .then((list) => this.setState({ list }));
   }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Welcome to Stamp Rally!!!!</Text>
         <FlatList
           keyExtractor={(item, index) => {
             return index.toString();
@@ -31,6 +36,7 @@ export default class HomeScreen extends React.Component {
                 button
                 onPress={() =>
                   this.props.navigation.navigate("Details", {
+                    title: item.title,
                     locations: item.locations
                   })
                 }
