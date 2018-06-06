@@ -7,8 +7,31 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <Text>Welcome to Stamp Rally!</Text>
         <Button
-          title="Open details!"
-          onPress={() => this.props.navigation.navigate("Details")}
+          title="Show me the map!"
+          onPress={() =>
+            this.props.navigation.navigate("Details", {
+              locations: [
+                {
+                  latlng: {
+                    latitude: 37.78825,
+                    longitude: -122.4324
+                  },
+                  title: "San Francisco!",
+                  description: "A city in America.",
+                  id: 0
+                },
+                {
+                  latlng: {
+                    latitude: 37.6,
+                    longitude: -122.5
+                  },
+                  title: "San Francisco!",
+                  description: "A city in America.",
+                  id: 1
+                }
+              ]
+            })
+          }
         />
       </View>
     );
