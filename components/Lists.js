@@ -16,6 +16,10 @@ export default class Lists extends Component {
                 subtitle: 'Vice Chairman'
             }]
         }
+        this.onPress = this.onPress.bind(this);
+    }
+    onPress() {
+        alert('hi');
     }
     render() {
         return (
@@ -26,6 +30,8 @@ export default class Lists extends Component {
                 data={this.state.list}
                 renderItem={({ item }) => {
                     return (<ListItem title={item.name}
+                        button
+                        onPress={() => this.onPress()}
                         leftAvatar={{ source: { uri: item.avatar_url } }}
                         subtitle={item.subtitle}
                     />)
