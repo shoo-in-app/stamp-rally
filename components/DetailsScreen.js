@@ -4,42 +4,50 @@ import { StyleSheet, Text, View, Button } from "react-native";
 
 import RallyDetails from "./RallyDetails";
 
-class DetailsScreen extends React.Component {
-  render() {
-    const { navigation } = this.props;
-    const locations = navigation.getParam("locations", [
-      {
-        latlng: {
-          latitude: 37.78825,
-          longitude: -122.4324
-        },
-        title: "San Francisco!",
-        description: "A city in America."
-      }
-    ]);
+let timeoutID;
 
+class DetailsScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapRef = null;
+    this.locations = this.props.navigation.getParam("locations", []);
+    this.markerIDs = [];
+  }
+
+  componentDidMount() {
+    timeoutID = setTimeout(() => {
+      this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
+    }, 1);
+  }
+
+  componentWillUnmount() {
+    if (timeoutID) clearTimeout(timeoutID);
+  }
+
+  render() {
     return (
       <View style={{ flex: 1, flexDirection: "column" }}>
         <MapView
           style={styles.map}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
+          ref={(ref) => {
+            this.mapRef = ref;
           }}
         >
-          {locations.map((location) => (
-            <MapView.Marker
-              key={location.id}
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude
-              }}
-              title={location.title}
-              description={location.description}
-            />
-          ))}
+          {this.locations.map((location) => {
+            this.markerIDs.push(location.id.toString());
+            return (
+              <MapView.Marker
+                identifier={location.id.toString()}
+                key={location.id}
+                coordinate={{
+                  latitude: location.lat,
+                  longitude: location.lng
+                }}
+                title={location.title}
+                description={location.description}
+              />
+            );
+          })}
         </MapView>
         <RallyDetails style={styles.details} />
       </View>
