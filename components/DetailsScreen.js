@@ -98,6 +98,12 @@ class DetailsScreen extends React.Component {
     };
   }
 
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: navigation.getParam("title", "Rally Details")
+    };
+  };
+
   componentDidMount() {
     timeoutID = setTimeout(() => {
       this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
