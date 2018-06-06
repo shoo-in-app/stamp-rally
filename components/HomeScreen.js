@@ -1,17 +1,38 @@
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
-import Lists from "./Lists";
+import { StyleSheet, Text, View, Button, FlatList } from "react-native";
+import { ListItem } from 'react-native-elements';
 
 export default class HomeScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      list: []
+    }
+  }
+  componentDidMount() {
+    return fetch('https://cc4-flower-dev.herokuapp.com/rallies')
+      .then((response) => response.json())
+      .then(list => this.setState({ list }));
+  }
   render() {
     return (
       <View style={styles.container}>
         <Text>Welcome to Stamp Rally!!!!</Text>
-        <Button
-          title="Open details!"
-          onPress={() => this.props.navigation.navigate("Details")}
+        <FlatList
+          keyExtractor={(item, index) => {
+            return index.toString();
+          }}
+          data={this.state.list}
+          renderItem={({ item }) => {
+            return (<ListItem
+              title={item.title}
+              TitleStyle={{ color: 'blue', width: '100%' }}
+              button
+              onPress={() => this.props.navigation.navigate("Details")}
+              subtitle={item.description}
+            />)
+          }}
         />
-        <Lists />
       </View>
     );
   }
@@ -20,8 +41,10 @@ export default class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+  },
 });
