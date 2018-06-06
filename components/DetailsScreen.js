@@ -33,7 +33,6 @@ class DetailsScreen extends React.Component {
                   this.setState((oldState) => {
                     const newState = { ...oldState };
                     newState.selectedMarker = this.locations[index];
-                    console.log(JSON.stringify(newState.selectedMarker));
                     return newState;
                   });
                 }
@@ -72,9 +71,6 @@ class DetailsScreen extends React.Component {
                               this.setState((oldState) => {
                                 const newState = { ...oldState };
                                 newState.selectedMarker = this.locations[index];
-                                console.log(
-                                  JSON.stringify(newState.selectedMarker)
-                                );
                                 return newState;
                               });
                             }}
@@ -135,7 +131,7 @@ class DetailsScreen extends React.Component {
 const styles = StyleSheet.create({
   map: { flex: 0.8 },
   details: {
-    flex: 0.2
+    height: 100
   }
 });
 
