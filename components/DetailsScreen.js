@@ -29,7 +29,14 @@ class DetailsScreen extends React.Component {
           onPress={
             /*eslint-disable */
             location.visited
-              ? () => {}
+              ? () => {
+                  this.setState((oldState) => {
+                    const newState = { ...oldState };
+                    newState.selectedMarker = this.locations[index];
+                    console.log(JSON.stringify(newState.selectedMarker));
+                    return newState;
+                  });
+                }
               : () => {
                   this.setState((oldState) => {
                     const newState = { ...oldState };
@@ -61,6 +68,16 @@ class DetailsScreen extends React.Component {
                             coordinate={newMarker.coordinate}
                             description={newMarker.description}
                             pinColor="green"
+                            onPress={() => {
+                              this.setState((oldState) => {
+                                const newState = { ...oldState };
+                                newState.selectedMarker = this.locations[index];
+                                console.log(
+                                  JSON.stringify(newState.selectedMarker)
+                                );
+                                return newState;
+                              });
+                            }}
                           />
                         );
                         return newState;
@@ -108,7 +125,7 @@ class DetailsScreen extends React.Component {
         </MapView>
         <RallyDetails
           style={styles.details}
-          selected-marker={this.state.selectedMarker}
+          selectedMarker={this.state.selectedMarker}
         />
       </View>
     );
