@@ -32,7 +32,10 @@ class DetailsScreen extends React.Component {
           {locations.map((location) => (
             <MapView.Marker
               key={location.id}
-              coordinate={location.latlng}
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude
+              }}
               title={location.title}
               description={location.description}
             />
