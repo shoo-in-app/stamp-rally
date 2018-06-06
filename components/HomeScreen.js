@@ -28,7 +28,7 @@ export default class HomeScreen extends React.Component {
               title={item.title}
               TitleStyle={{ color: 'blue', width: '100%' }}
               button
-              onPress={() => this.props.navigation.navigate("Details")}
+              onPress={() => this.props.navigation.navigate("Details", { "locations": item.locations })}
               subtitle={item.description}
             />)
           }}
