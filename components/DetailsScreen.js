@@ -1,6 +1,7 @@
 import React from "react";
 import { MapView } from "expo";
 import { StyleSheet, Text, View, Button } from "react-native";
+import axios from "axios";
 
 import RallyDetails from "./RallyDetails";
 
@@ -12,6 +13,76 @@ class DetailsScreen extends React.Component {
     this.mapRef = null;
     this.locations = this.props.navigation.getParam("locations", []);
     this.markerIDs = [];
+    this.markers = this.locations.map((location, index) => {
+      this.markerIDs.push(location.id.toString());
+      return (
+        <MapView.Marker
+          identifier={location.id.toString()}
+          key={location.id.toString()}
+          coordinate={{
+            latitude: location.lat,
+            longitude: location.lng
+          }}
+          title={location.title}
+          description={location.description}
+          pinColor={location.visited ? "green" : "red"}
+          onPress={
+            /*eslint-disable */
+            location.visited
+              ? () => {}
+              : () => {
+                  this.setState((oldState) => {
+                    const newState = { ...oldState };
+                    newState.selectedMarker = this.locations[index];
+                    return newState;
+                  });
+                  const markerInfo = this.locations[index];
+                  // PATCH change to API
+                  // Update marker
+
+                  if (markerInfo.visited) return;
+                  axios
+                    .patch(
+                      `https://cc4-flower-dev.herokuapp.com/location/${
+                        markerInfo.user_id
+                      }/${markerInfo.location_id}`,
+                      {
+                        visited: true
+                      }
+                    )
+                    .then(() => {
+                      this.setState((oldState) => {
+                        const newState = { ...oldState };
+                        const newMarker = newState.markers[index].props;
+                        newState.markers[index] = (
+                          <MapView.Marker
+                            key={newMarker.identifier}
+                            identifier={newMarker.identifier}
+                            coordinate={newMarker.coordinate}
+                            description={newMarker.description}
+                            pinColor="green"
+                          />
+                        );
+                        return newState;
+                      });
+                    })
+                    .catch(() => {
+                      Alert.alert(
+                        "Connection error",
+                        "There is a problem with the internet connection. Please try again later.",
+                        [{ text: "OK", onPress: () => {} }]
+                      );
+                    });
+                }
+          }
+          /*eslint-enable */
+        />
+      );
+    });
+    this.state = {
+      markers: this.markers,
+      selectedMarker: null
+    };
   }
 
   componentDidMount() {
@@ -33,23 +104,12 @@ class DetailsScreen extends React.Component {
             this.mapRef = ref;
           }}
         >
-          {this.locations.map((location) => {
-            this.markerIDs.push(location.id.toString());
-            return (
-              <MapView.Marker
-                identifier={location.id.toString()}
-                key={location.id}
-                coordinate={{
-                  latitude: location.lat,
-                  longitude: location.lng
-                }}
-                title={location.title}
-                description={location.description}
-              />
-            );
-          })}
+          {this.state.markers}
         </MapView>
-        <RallyDetails style={styles.details} />
+        <RallyDetails
+          style={styles.details}
+          selected-marker={this.state.selectedMarker}
+        />
       </View>
     );
   }
