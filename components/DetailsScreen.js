@@ -125,18 +125,17 @@ class DetailsScreen extends React.Component {
         >
           {this.state.markers}
         </MapView>
-        <RallyDetails
-          style={styles.details}
-          selectedMarker={this.state.selectedMarker}
-        />
+        <RallyDetails selectedMarker={this.state.selectedMarker} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  map: { flex: 0.8 },
+  map: { flex: 1 },
   details: {
+    flex: 0,
+    flexBasis: 100,
     height: 100
   }
 });
