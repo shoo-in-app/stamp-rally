@@ -121,8 +121,7 @@ class DetailsScreen extends React.Component {
           style={styles.map}
           ref={(ref) => {
             this.mapRef = ref;
-          }}
-        >
+          }}>
           {this.state.markers}
         </MapView>
         <RallyDetails selectedMarker={this.state.selectedMarker} />
