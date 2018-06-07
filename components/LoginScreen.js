@@ -1,50 +1,40 @@
 import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import Expo from "expo";
-import { config } from "dotenv";
-config();
-
-async function signInWithGoogleAsync() {
-  try {
-    const result = await Expo.Google.logInAsync({
-      androidClientId: process.env.ANDROID_CLIENT_ID,
-      // iosClientId: YOUR_CLIENT_ID_HERE,
-      scopes: ["profile", "email"]
-    });
-
-    if (result.type === "success") {
-      return result.accessToken;
-    } else {
-      return { cancelled: true };
-    }
-  } catch (e) {
-    return { error: true };
-  }
-}
-function login() {
-  console.log("Hello world!");
-  signInWithGoogleAsync()
-    .then(result => {
-      console.log(result);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-}
 
 export default class LoginScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { cancelled: false };
+  }
+
+  login() {
+    Expo.Google.logInAsync({
+      androidClientId:
+        "309418440628-lchfubsqb1q49q9h4ghqrjia4tlrfenj.apps.googleusercontent.com",
+      // iosClientId: YOUR_CLIENT_ID_HERE,
+      scopes: ["profile", "email"]
+    })
+      .then(result => {
+        if (result.type === "success") {
+          this.props.navigation.navigate("Home", {
+            idToken: result.idToken
+          });
+        } else {
+          this.setState({ cancelled: true });
+        }
+      })
+      .catch(err => {
+        this.setState({ cancelled: true });
+      });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Login!</Text>
-        <Button title="Login!" onPress={login} />
-        <Button
-          title="Go Home!"
-          onPress={() => {
-            console.log("move to home");
-            return this.props.navigation.navigate("Home");
-          }}
-        />
+        <Text>Please Login!</Text>
+        <Text>{this.state.cancelled ? "Login failed" : ""}</Text>
+        <Button title="Login with Google" onPress={() => this.login()} />
       </View>
     );
   }
