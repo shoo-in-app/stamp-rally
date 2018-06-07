@@ -12,7 +12,8 @@ export default class LoginScreen extends React.Component {
     Expo.Google.logInAsync({
       androidClientId:
         "309418440628-lchfubsqb1q49q9h4ghqrjia4tlrfenj.apps.googleusercontent.com",
-      // iosClientId: YOUR_CLIENT_ID_HERE,
+      iosClientId:
+        "309418440628-t2gt9pl1cbtu4jr5crbb836fqj4nsa13.apps.googleusercontent.com",
       scopes: ["profile", "email"]
     })
       .then((result) => {
@@ -32,8 +33,7 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Please Login!</Text>
-        <Text>{this.state.cancelled ? "Login failed" : ""}</Text>
+        <Text>{this.state.cancelled ? "Login failed" : "Please Login!"}</Text>
         <Button title="Login with Google" onPress={() => this.login()} />
       </View>
     );
