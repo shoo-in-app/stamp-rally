@@ -15,7 +15,7 @@ export default class LoginScreen extends React.Component {
       // iosClientId: YOUR_CLIENT_ID_HERE,
       scopes: ["profile", "email"]
     })
-      .then(result => {
+      .then((result) => {
         if (result.type === "success") {
           this.props.navigation.navigate("Home", {
             idToken: result.idToken
@@ -24,7 +24,7 @@ export default class LoginScreen extends React.Component {
           this.setState({ cancelled: true });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ cancelled: true });
       });
   }

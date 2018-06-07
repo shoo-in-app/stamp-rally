@@ -16,8 +16,8 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     return fetch("https://cc4-flower-dev.herokuapp.com/rallies")
-      .then(response => response.json())
-      .then(list => this.setState({ list }));
+      .then((response) => response.json())
+      .then((list) => this.setState({ list }));
   }
 
   render() {
