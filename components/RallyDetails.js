@@ -5,7 +5,7 @@ export default class RallyDetails extends React.Component {
   render() {
     if (this.props.selectedMarker) {
       return (
-        <View>
+        <View style={styles.container}>
           <Text style={styles.title}>{this.props.selectedMarker.name}</Text>
           <Text style={styles.description}>
             {this.props.selectedMarker.description}
@@ -19,7 +19,15 @@ export default class RallyDetails extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 0,
+    height: 100,
+    justifyContent: "flex-start",
+    alignItems: "flex-start"
+  },
   placeholder: {
+    flex: 0,
+    height: 100,
     fontSize: 20,
     textAlign: "center"
   },
