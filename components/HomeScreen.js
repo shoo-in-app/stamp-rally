@@ -3,13 +3,6 @@ import { StyleSheet, Text, View, Button, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      list: []
-    };
-  }
-
   static navigationOptions = {
     title: "Stamp Rallies"
   };
@@ -17,7 +10,9 @@ export default class HomeScreen extends React.Component {
   componentDidMount() {
     return fetch("https://cc4-flower-dev.herokuapp.com/rallies")
       .then((response) => response.json())
-      .then((list) => this.setState({ list }));
+      .then((rallies) => {
+        this.props.loadRallies(rallies);
+      });
   }
 
   render() {
@@ -27,12 +22,11 @@ export default class HomeScreen extends React.Component {
           keyExtractor={(item, index) => {
             return index.toString();
           }}
-          data={this.state.list}
+          data={this.props.rallies}
           renderItem={({ item }) => {
             return (
               <ListItem
                 title={item.title}
-                TitleStyle={{ color: "blue", width: "100%" }}
                 button
                 onPress={() =>
                   this.props.navigation.navigate("Details", {
