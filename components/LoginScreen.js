@@ -8,6 +8,12 @@ export default class LoginScreen extends React.Component {
     this.state = { cancelled: false };
   }
 
+  componentDidMount() {
+    if (this.props.userID) {
+      this.props.navigation.navigate("Home");
+    }
+  }
+
   login() {
     Expo.Google.logInAsync({
       androidClientId:
@@ -18,14 +24,13 @@ export default class LoginScreen extends React.Component {
     })
       .then((result) => {
         if (result.type === "success") {
-          this.props.navigation.navigate("Home", {
-            idToken: result.idToken
-          });
+          this.props.setUserID(result.idToken);
+          this.props.navigation.navigate("Home");
         } else {
           this.setState({ cancelled: true });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({ cancelled: true });
       });
   }
