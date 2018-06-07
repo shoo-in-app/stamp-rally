@@ -3,16 +3,14 @@ import { createStackNavigator } from "react-navigation";
 
 import HomeScreen from "./components/HomeScreen";
 import DetailsScreen from "./components/DetailsScreen";
-import LoginScreen from "./components/LoginScreen";
 
 const RootStack = createStackNavigator(
   {
-    Login: LoginScreen,
     Home: HomeScreen,
     Details: DetailsScreen
   },
   {
-    initialRouteName: "Login"
+    initialRouteName: "Home"
   }
 );
 
