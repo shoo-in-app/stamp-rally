@@ -27,7 +27,9 @@ export default class HomeScreen extends React.Component {
       setUserID: this.props.setUserID,
       navigate: this.props.navigation.navigate.bind(this)
     });
-    fetch("https://cc4-flower-dev.herokuapp.com/rallies")
+    const mockID =
+      "3qYFuJsxZSUupuCLQmxwjUDV5TSbhzB7kwNr2mpB2YNuMW3CPSGe8CK3hPcZDErDVu5eM83EcT6DmugqmpRFD5tQCped6geXgXYUfZwfQKmUcZ8qtPnQ7ssppVvQaHKX";
+    fetch(`https://cc4-flower-dev.herokuapp.com/rallies/${mockID}`)
       .then((response) => response.json())
       .then((rallies) => {
         this.props.loadRallies(rallies);
