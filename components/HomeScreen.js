@@ -1,36 +1,61 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, FlatList } from "react-native";
-import { ListItem } from 'react-native-elements';
+import PropTypes from "prop-types";
+import { StyleSheet, View, FlatList, Button } from "react-native";
+import { ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      list: []
-    }
-  }
+  static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state;
+    const logoutButton = (
+      <Button
+        title="Logout"
+        onPress={() => {
+          params.setUserID(null);
+          params.navigate("Login");
+        }}
+      />
+    );
+    return {
+      title: "Stamp Rallies",
+      headerLeft: null,
+      headerRight: logoutButton
+    };
+  };
+
   componentDidMount() {
-    return fetch('https://cc4-flower-dev.herokuapp.com/rallies')
+    this.props.navigation.setParams({
+      setUserID: this.props.setUserID,
+      navigate: this.props.navigation.navigate.bind(this)
+    });
+    fetch("https://cc4-flower-dev.herokuapp.com/rallies")
       .then((response) => response.json())
-      .then(list => this.setState({ list }));
+      .then((rallies) => {
+        this.props.loadRallies(rallies);
+      });
   }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Welcome to Stamp Rally!!!!</Text>
         <FlatList
-          keyExtractor={(item, index) => {
+          keyExtractor={(_, index) => {
             return index.toString();
           }}
-          data={this.state.list}
+          data={this.props.rallies}
           renderItem={({ item }) => {
-            return (<ListItem
-              title={item.title}
-              TitleStyle={{ color: 'blue', width: '100%' }}
-              button
-              onPress={() => this.props.navigation.navigate("Details", { "locations": item.locations })}
-              subtitle={item.description}
-            />)
+            return (
+              <ListItem
+                title={item.title}
+                button
+                onPress={() =>
+                  this.props.navigation.navigate("Details", {
+                    title: item.title,
+                    locations: item.locations
+                  })
+                }
+                subtitle={item.description}
+              />
+            );
           }}
         />
       </View>
@@ -40,11 +65,17 @@ export default class HomeScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   item: {
     padding: 10,
     fontSize: 18,
-    height: 44,
-  },
+    height: 44
+  }
 });
+
+HomeScreen.propTypes = {
+  setUserID: PropTypes.func.isRequired,
+  loadRallies: PropTypes.func.isRequired,
+  rallies: PropTypes.array.isRequired
+};
