@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { StyleSheet, Text, View, Button } from "react-native";
 import Expo from "expo";
+import Axios from "axios";
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -25,8 +26,18 @@ export default class LoginScreen extends React.Component {
     })
       .then((result) => {
         if (result.type === "success") {
-          this.props.setUserID(result.idToken);
-          this.props.navigation.navigate("Home");
+          const body = {
+            idToken: result.idToken,
+            username: result.user.email.split("@")[0]
+          };
+          Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
+            .then(() => {
+              this.props.setUserID(result.idToken);
+              this.props.navigation.navigate("Home");
+            })
+            .catch(() => {
+              this.setState({ cancelled: true });
+            });
         } else {
           this.setState({ cancelled: true });
         }
