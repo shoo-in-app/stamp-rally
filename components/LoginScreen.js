@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { StyleSheet, Text, View, Button } from "react-native";
 import Expo from "expo";
 
@@ -53,3 +54,8 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   }
 });
+
+LoginScreen.propTypes = {
+  userID: PropTypes.string,
+  setUserID: PropTypes.func.isRequired
+};

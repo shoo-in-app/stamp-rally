@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { StyleSheet, Text, View } from "react-native";
 
 export default class RallyDetails extends React.Component {
@@ -40,3 +41,7 @@ const styles = StyleSheet.create({
     margin: 10
   }
 });
+
+RallyDetails.propTypes = {
+  selectedMarker: PropTypes.object
+};

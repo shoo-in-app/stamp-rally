@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { StyleSheet, View, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
 
@@ -54,3 +55,8 @@ const styles = StyleSheet.create({
     height: 44
   }
 });
+
+HomeScreen.propTypes = {
+  loadRallies: PropTypes.func.isRequired,
+  rallies: PropTypes.array.isRequired
+};
