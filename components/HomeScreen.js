@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
@@ -24,7 +24,7 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <FlatList
-          keyExtractor={(item, index) => {
+          keyExtractor={(_, index) => {
             return index.toString();
           }}
           data={this.state.list}

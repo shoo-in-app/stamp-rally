@@ -1,6 +1,6 @@
 import React from "react";
 import { MapView } from "expo";
-import { StyleSheet, Text, View, Button, Alert } from "react-native";
+import { StyleSheet, View, Alert } from "react-native";
 import axios from "axios";
 
 import RallyDetails from "./RallyDetails";
@@ -121,7 +121,8 @@ class DetailsScreen extends React.Component {
           style={styles.map}
           ref={(ref) => {
             this.mapRef = ref;
-          }}>
+          }}
+        >
           {this.state.markers}
         </MapView>
         <RallyDetails selectedMarker={this.state.selectedMarker} />

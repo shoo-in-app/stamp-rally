@@ -25,7 +25,7 @@ export default class LoginScreen extends React.Component {
           this.setState({ cancelled: true });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({ cancelled: true });
       });
   }
