@@ -1,11 +1,7 @@
 import React from "react";
 import { MapView } from "expo";
-<<<<<<< HEAD
 import { Platform, StyleSheet, Text, View, Button, Alert } from "react-native";
 import { Constants, Location, Permissions } from 'expo';
-=======
-import { StyleSheet, View, Alert } from "react-native";
->>>>>>> 018bfabbceafbe191c8c691c9d9c3d8b25c2ecdd
 import axios from "axios";
 
 import RallyDetails from "./RallyDetails";
