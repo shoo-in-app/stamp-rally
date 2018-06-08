@@ -141,9 +141,11 @@ class DetailsScreen extends React.Component {
       coordinate={location.coords}
       title="Your location"
       description="This is your current location"
-      pinColor="red"
+      pinColor="blue"
     />;
-
+    let markers = this.state.markers.slice();
+    markers.push(userLocation);
+    this.setState({ markers });
   };
 
   render() {
