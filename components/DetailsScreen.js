@@ -14,7 +14,6 @@ class DetailsScreen extends React.Component {
     this.mapRef = null;
     this.locations = this.props.navigation.getParam("locations", []);
     this.markerIDs = [];
-    console.log('this.locations: ', this.locations);
     this.markers = this.locations.map((location, index) => {
       this.markerIDs.push(location.id.toString());
       return (
