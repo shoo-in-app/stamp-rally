@@ -1,8 +1,6 @@
-import { createStore } from "redux";
-
 const initialState = {
   rallies: [],
-  userID: ""
+  userID: null
 };
 
 const LOAD_RALLIES = "LOAD_RALLIES";
