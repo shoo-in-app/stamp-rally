@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 
 export default class RallyDetails extends React.Component {
   render() {
@@ -8,9 +8,16 @@ export default class RallyDetails extends React.Component {
       return (
         <View style={styles.container}>
           <Text style={styles.title}>{this.props.selectedMarker.name}</Text>
-          <Text style={styles.description}>
-            {this.props.selectedMarker.description}
-          </Text>
+          <View style={styles.inlineContainer}>
+            <View style={styles.col1}>
+              <Text style={styles.description}>
+                {this.props.selectedMarker.description}
+              </Text>
+            </View>
+            <View style={styles.col2}>
+              <Button style={styles.button} title="Collect" />
+            </View>
+          </View>
         </View>
       );
     } else {
@@ -24,21 +31,19 @@ const styles = StyleSheet.create({
     flex: 0,
     height: 100,
     justifyContent: "flex-start",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
   },
-  placeholder: {
-    flex: 0,
-    height: 100,
-    fontSize: 20,
-    textAlign: "center"
+  inlineContainer: {
+    flexDirection: 'row'
   },
-  title: {
-    fontSize: 20,
-    margin: 10
+  col1: {
+    flex: 0.6,
+  },
+  col2: {
+    flex: 0.4,
   },
   description: {
     fontSize: 15,
-    margin: 10
   }
 });
 
