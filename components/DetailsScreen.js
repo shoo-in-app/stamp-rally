@@ -95,8 +95,11 @@ class DetailsScreen extends React.Component {
     });
     this.state = {
       markers: this.markers,
-      selectedMarker: null
+      selectedMarker: null,
+      disabled: true
     };
+    this.distance = this.distance.bind(this);
+    this.isCloseToMarker = this.isCloseToMarker.bind(this);
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -145,7 +148,60 @@ class DetailsScreen extends React.Component {
     let markers = this.state.markers.slice();
     markers.push(userLocation);
     this.setState({ markers });
+
+    let loc = await Location.watchPositionAsync({
+      enableHighAccuracy: true,
+      distanceInterval: 1,
+      timeInterval: 2000
+    }, (loccation) => {
+      alert("updated!!");
+      const updateLocation = <MapView.Marker
+        key={location.identifier}
+        identifier={location.identifier}
+        coordinate={location.coords}
+        title="Your location"
+        description="This is your current location"
+        pinColor="blue"
+      />;
+      let markers = this.state.markers.slice();
+      markers.splice(-1, 1, updateLocation);
+      this.setState({ markers });
+      this.isCloseToMarker();
+    });
+    console.log('165: ', loc);
   };
+
+  distance(lat1, lon1, lat2, lon2, unit) {
+    const radlat1 = Math.PI * lat1 / 180
+    const radlat2 = Math.PI * lat2 / 180
+    const theta = lon1 - lon2
+    const radtheta = Math.PI * theta / 180
+    let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    dist = Math.acos(dist);
+    dist = dist * 180 / Math.PI;
+    dist = dist * 60 * 1.1515;
+    dist = dist * 1.609344;;
+    alert('distance: ', dist);
+    return dist;
+  }
+
+  isCloseToMarker() {
+    // get all markers except user's
+    const targetMarkers = this.state.markers.slice(0, -1);
+    for (let i = 0; i < targetMarkers.length; i++) {
+      console.log('188: ', this.state.markers.slice(-1));
+      // user location marker
+      const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
+      // the other location markers
+      const coords = targetMarkers[i].props.coordinate;
+      const distance = this.distance(coords.latitude, coords.longitude, 35.6549, 139.726);// userCoords.latitude, userCoords.longitude);
+      console.log('194 ', i, targetMarkers[i]);
+      console.log('195 ', this.state.selectedMarker);
+      if (distance < 5) {
+        this.setState({ disabled: false });
+      }
+    }
+  }
 
   render() {
     return (
@@ -158,7 +214,7 @@ class DetailsScreen extends React.Component {
         >
           {this.state.markers}
         </MapView>
-        <RallyDetails selectedMarker={this.state.selectedMarker} />
+        <RallyDetails selectedMarker={this.state.selectedMarker} disabled={this.state.disabled} />
       </View>
     );
   }
