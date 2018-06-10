@@ -3,6 +3,18 @@ import PropTypes from "prop-types";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 export default class RallyDetails extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  get isCloseEnough() {
+    console.log('11: ', this.props.disabled);
+
+    if (!this.props.disabled) return <Button key={this.props.selectedMarker.id.toString()} style={styles.button} title="Collect" onPress={() => {
+      console.log('You clicked: ', this.props.selectedMarker);
+    }} />
+  }
+
   render() {
     if (this.props.selectedMarker) {
       return (
@@ -15,7 +27,7 @@ export default class RallyDetails extends React.Component {
               </Text>
             </View>
             <View style={styles.col2}>
-              <Button style={styles.button} title="Collect" />
+              {this.isCloseEnough}
             </View>
           </View>
         </View>
@@ -48,5 +60,5 @@ const styles = StyleSheet.create({
 });
 
 RallyDetails.propTypes = {
-  selectedMarker: PropTypes.object
+  selectedMarker: PropTypes.object,
 };

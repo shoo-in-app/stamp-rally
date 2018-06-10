@@ -1,11 +1,12 @@
 import React from "react";
 import { MapView } from "expo";
+import PropTypes from "prop-types";
 import { Platform, StyleSheet, Text, View, Button, Alert } from "react-native";
 import { Constants, Location, Permissions } from 'expo';
 import axios from "axios";
 
 import RallyDetails from "./RallyDetails";
-
+import LoginScreen from "./LoginScreen";
 let timeoutID;
 
 class DetailsScreen extends React.Component {
@@ -44,13 +45,15 @@ class DetailsScreen extends React.Component {
                   return newState;
                 });
                 const markerInfo = this.locations[index];
+                console.log('makerInfo: ', markerInfo);
+                this.isCloseToMarker(markerInfo);
                 // PATCH change to API
                 // Update marker
 
                 if (markerInfo.visited) return;
                 axios
                   .patch(
-                    `https://cc4-flower-dev.herokuapp.com/location/${
+                    `http://localhost:8000/location/${
                     markerInfo.user_id
                     }/${markerInfo.location_id}`,
                     {
@@ -149,10 +152,10 @@ class DetailsScreen extends React.Component {
     markers.push(userLocation);
     this.setState({ markers });
 
-    let loc = await Location.watchPositionAsync({
+    await Location.watchPositionAsync({
       enableHighAccuracy: true,
       distanceInterval: 1,
-      timeInterval: 2000
+      timeInterval: 200
     }, (loccation) => {
       alert("updated!!");
       const updateLocation = <MapView.Marker
@@ -166,39 +169,36 @@ class DetailsScreen extends React.Component {
       let markers = this.state.markers.slice();
       markers.splice(-1, 1, updateLocation);
       this.setState({ markers });
-      this.isCloseToMarker();
     });
-    console.log('165: ', loc);
   };
 
-  distance(lat1, lon1, lat2, lon2, unit) {
-    const radlat1 = Math.PI * lat1 / 180
-    const radlat2 = Math.PI * lat2 / 180
-    const theta = lon1 - lon2
-    const radtheta = Math.PI * theta / 180
+  distance(lat1, lon1, lat2, lon2) {
+    const radlat1 = Math.PI * lat1 / 180;
+    const radlat2 = Math.PI * lat2 / 180;
+    const theta = lon1 - lon2;
+    const radtheta = Math.PI * theta / 180;
     let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
     dist = Math.acos(dist);
     dist = dist * 180 / Math.PI;
     dist = dist * 60 * 1.1515;
     dist = dist * 1.609344;;
-    alert('distance: ', dist);
     return dist;
   }
 
-  isCloseToMarker() {
-    // get all markers except user's
-    const targetMarkers = this.state.markers.slice(0, -1);
-    for (let i = 0; i < targetMarkers.length; i++) {
-      console.log('188: ', this.state.markers.slice(-1));
-      // user location marker
-      const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
-      // the other location markers
-      const coords = targetMarkers[i].props.coordinate;
-      const distance = this.distance(coords.latitude, coords.longitude, 35.6549, 139.726);// userCoords.latitude, userCoords.longitude);
-      console.log('194 ', i, targetMarkers[i]);
-      console.log('195 ', this.state.selectedMarker);
-      if (distance < 5) {
-        this.setState({ disabled: false });
+  isCloseToMarker(markerInfo) {
+    // user location marker
+    const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
+    // the other location markers
+    const distance = this.distance(markerInfo.lat, markerInfo.lng, userCoords.latitude, userCoords.longitude);
+    if (distance < 8.05) {
+      if (this.state.selectedMarker === null) {
+        return this.setState({ disabled: true });
+      }
+      else {
+        if (this.state.selectedMarker
+          && this.state.selectedMarker.id === markerInfo.id) {
+          return this.setState({ disabled: false });
+        }
       }
     }
   }
@@ -230,3 +230,7 @@ const styles = StyleSheet.create({
 });
 
 export default DetailsScreen;
+
+// DetailsScreen.propTypes = {
+//   userID: PropTypes.string,
+// };
