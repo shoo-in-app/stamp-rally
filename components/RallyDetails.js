@@ -7,11 +7,6 @@ export default class RallyDetails extends React.Component {
     super(props);
   }
 
-  get isCloseEnough() {
-    if (!this.props.disabled) return <Button key={this.props.selectedMarker.id.toString()} style={styles.button} title="Collect" onPress={() => {
-      console.log('You clicked: ', this.props.selectedMarker);
-    }} />
-  }
 
   render() {
     if (this.props.selectedMarker) {
@@ -26,6 +21,9 @@ export default class RallyDetails extends React.Component {
             </View>
             <View style={styles.col2}>
               {this.isCloseEnough}
+              <Button key={this.props.selectedMarker.id.toString()} disabled={this.props.disabled} style={styles.button} title="Collect" onPress={() => {
+                console.log('You clicked: ', this.props.selectedMarker);
+              }} />
             </View>
           </View>
         </View>

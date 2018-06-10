@@ -190,7 +190,7 @@ class DetailsScreen extends React.Component {
     const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
     // the other location markers
     const distance = this.distance(markerInfo.lat, markerInfo.lng, userCoords.latitude, userCoords.longitude);
-    if (distance < 8.05) {
+    if (distance < 5) {
       if (this.state.selectedMarker === null) {
         return this.setState({ disabled: true });
       }
