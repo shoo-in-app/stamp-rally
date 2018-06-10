@@ -8,8 +8,6 @@ export default class RallyDetails extends React.Component {
   }
 
   get isCloseEnough() {
-    console.log('11: ', this.props.disabled);
-
     if (!this.props.disabled) return <Button key={this.props.selectedMarker.id.toString()} style={styles.button} title="Collect" onPress={() => {
       console.log('You clicked: ', this.props.selectedMarker);
     }} />
