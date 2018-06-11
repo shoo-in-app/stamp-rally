@@ -19,15 +19,13 @@ export default class RallyDetails extends React.Component {
               </Text>
             </View>
             <View style={styles.col2}>
-              {this.isCloseEnough}
+              {/* {this.isCloseEnough} */}
               <Button
                 key={this.props.selectedMarker.id.toString()}
                 disabled={this.props.disabled}
                 style={styles.button}
                 title="Collect"
-                onPress={() => {
-                  console.log("You clicked: ", this.props.selectedMarker);
-                }}
+                onPress={() => this.props.sendPatch(this.props.selectedMarker.id)}
               />
             </View>
           </View>
