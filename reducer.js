@@ -1,13 +1,19 @@
 const initialState = {
-  rallies: [],
+  chosenRallies: [],
+  notChosenRallies: [],
   userID: null
 };
 
-const LOAD_RALLIES = "LOAD_RALLIES";
+const LOAD_CHOSEN_RALLIES = "LOAD_CHOSEN_RALLIES";
+const LOAD_NOT_CHOSEN_RALLIES = "LOAD_NOT_CHOSEN_RALLIES";
 const SET_USER_ID = "SET_USER_ID";
 
-const loadRallies = (rallies) => ({
-  type: LOAD_RALLIES,
+const loadChosenRallies = (rallies) => ({
+  type: LOAD_CHOSEN_RALLIES,
+  rallies
+});
+const loadNotChosenRallies = (rallies) => ({
+  type: LOAD_NOT_CHOSEN_RALLIES,
   rallies
 });
 
@@ -18,8 +24,10 @@ const setUserID = (userID) => ({
 
 const reducer = (previousState = initialState, action) => {
   switch (action.type) {
-    case LOAD_RALLIES:
-      return { ...previousState, rallies: action.rallies };
+    case LOAD_CHOSEN_RALLIES:
+      return { ...previousState, chosenRallies: action.rallies };
+    case LOAD_NOT_CHOSEN_RALLIES:
+      return { ...previousState, notChosenRallies: action.rallies };
     case SET_USER_ID:
       return { ...previousState, userID: action.userID };
     default:
@@ -27,4 +35,4 @@ const reducer = (previousState = initialState, action) => {
   }
 };
 
-export { reducer, loadRallies, setUserID };
+export { reducer, loadChosenRallies, loadNotChosenRallies, setUserID };
