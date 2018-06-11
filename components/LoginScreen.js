@@ -26,14 +26,15 @@ export default class LoginScreen extends React.Component {
     })
       .then((result) => {
         if (result.type === "success") {
+          const idToken = result.idToken.split(".")[0];
           const body = {
-            idToken: result.idToken,
+            idToken: idToken,
             username: result.user.email.split("@")[0]
           };
           Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
             .then(() => {
-              console.log("id", result.idToken);
-              this.props.setUserID(result.idToken);
+              console.log("id", idToken);
+              this.props.setUserID(idToken);
               this.props.navigation.navigate("Home");
             })
             .catch(() => {

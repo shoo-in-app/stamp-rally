@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Text, StyleSheet, View, FlatList, Button } from "react-native";
-import { ListItem } from "react-native-elements";
+import { StyleSheet, View, FlatList, Button } from "react-native";
+import { Text, ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -46,6 +46,8 @@ export default class HomeScreen extends React.Component {
           }}
           data={rallies}
           renderItem={({ item }) => {
+            const total = item.locations.length;
+            const progress = item.locations.filter((l) => l.visited).length;
             return (
               <ListItem
                 title={item.title}
@@ -57,6 +59,13 @@ export default class HomeScreen extends React.Component {
                   })
                 }
                 subtitle={item.description}
+                badge={{
+                  value: `${progress}/${total}`,
+                  containerStyle: {
+                    marginTop: 0,
+                    backgroundColor: total === progress ? "dodgerblue" : "gray"
+                  }
+                }}
               />
             );
           }}
@@ -68,9 +77,9 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Your Rallies</Text>
+        <Text h3>Your Rallies</Text>
         {this.getRallies(this.props.chosenRallies)}
-        <Text>Find Other Rallies</Text>
+        <Text h3>Find Other Rallies</Text>
         {this.getRallies(this.props.notChosenRallies)}
       </View>
     );
