@@ -48,45 +48,7 @@ class DetailsScreen extends React.Component {
                   // Update marker
 
                   if (markerInfo.visited) return;
-                  axios
-                    .patch(
-                      `https://cc4-flower-dev.herokuapp.com/${
-                        this.props.userID
-                      }/${markerInfo.id}`,
-                      {
-                        visited: true
-                      }
-                    )
-                    .then(() => {
-                      this.setState((oldState) => {
-                        const newState = { ...oldState };
-                        const newMarker = newState.markers[index].props;
-                        newState.markers[index] = (
-                          <MapView.Marker
-                            key={newMarker.identifier}
-                            identifier={newMarker.identifier}
-                            coordinate={newMarker.coordinate}
-                            description={newMarker.description}
-                            pinColor="green"
-                            onPress={() => {
-                              this.setState((oldState) => {
-                                const newState = { ...oldState };
-                                newState.selectedMarker = this.locations[index];
-                                return newState;
-                              });
-                            }}
-                          />
-                        );
-                        return newState;
-                      });
-                    })
-                    .catch(() => {
-                      Alert.alert(
-                        "Connection error",
-                        "There is a problem with the internet connection. Please try again later.",
-                        [{ text: "OK", onPress: () => {} }]
-                      );
-                    });
+                  // this.sendPatch(markerInfo.id);
                 }
           }
           /*eslint-enable */
@@ -100,8 +62,49 @@ class DetailsScreen extends React.Component {
     };
     this.distance = this.distance.bind(this);
     this.isCloseToMarker = this.isCloseToMarker.bind(this);
+    this.sendPatch = this.sendPatch.bind(this);
   }
-
+  sendPatch(id) {
+    axios
+      .patch(
+        `https://cc4-flower-dev.herokuapp.com/location/${
+          this.props.userID
+        }/${id}`,
+        {
+          visited: true
+        }
+      )
+      .then(() => {
+        this.setState((oldState) => {
+          const newState = { ...oldState };
+          const newMarker = newState.markers[id - 1].props;
+          newState.markers[id - 1] = (
+            <MapView.Marker
+              key={newMarker.identifier}
+              identifier={newMarker.identifier}
+              coordinate={newMarker.coordinate}
+              description={newMarker.description}
+              pinColor="green"
+              onPress={() => {
+                this.setState((oldState) => {
+                  const newState = { ...oldState };
+                  newState.selectedMarker = this.locations[id - 1];
+                  return newState;
+                });
+              }}
+            />
+          );
+          return newState;
+        });
+      })
+      .catch(() => {
+        Alert.alert(
+          "Connection error",
+          "There is a problem with the internet connection. Please try again later.",
+          [{ text: "OK", onPress: () => {} }]
+        );
+      });
+  }
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam("title", "Rally Details")
@@ -226,6 +229,7 @@ class DetailsScreen extends React.Component {
         <RallyDetails
           selectedMarker={this.state.selectedMarker}
           disabled={this.state.disabled}
+          sendPatch={this.sendPatch}
         />
       </View>
     );

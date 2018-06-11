@@ -19,15 +19,20 @@ export default class RallyDetails extends React.Component {
               </Text>
             </View>
             <View style={styles.col2}>
-              {this.isCloseEnough}
               <Button
                 key={this.props.selectedMarker.id.toString()}
-                disabled={this.props.disabled}
+                disabled={
+                  this.props.selectedMarker.visited || this.props.disabled
+                }
                 style={styles.button}
-                title="Collect"
-                onPress={() => {
-                  console.log("You clicked: ", this.props.selectedMarker);
-                }}
+                title={
+                  this.props.selectedMarker.visited
+                    ? "ALREADY COLLECTED!!"
+                    : "COLLECT"
+                }
+                onPress={() =>
+                  this.props.sendPatch(this.props.selectedMarker.id)
+                }
               />
             </View>
           </View>
@@ -62,5 +67,6 @@ const styles = StyleSheet.create({
 
 RallyDetails.propTypes = {
   disabled: PropTypes.bool,
-  selectedMarker: PropTypes.object
+  selectedMarker: PropTypes.object,
+  sendPatch: PropTypes.func
 };
