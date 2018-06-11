@@ -30,28 +30,28 @@ class DetailsScreen extends React.Component {
             /*eslint-disable */
             location.visited
               ? () => {
-                this.setState((oldState) => {
-                  const newState = { ...oldState };
-                  newState.selectedMarker = this.locations[index];
-                  return newState;
-                });
-              }
+                  this.setState((oldState) => {
+                    const newState = { ...oldState };
+                    newState.selectedMarker = this.locations[index];
+                    return newState;
+                  });
+                }
               : () => {
-                this.setState((oldState) => {
-                  const newState = { ...oldState };
-                  newState.selectedMarker = this.locations[index];
-                  return newState;
-                });
-                const markerInfo = this.locations[index];
-                this.isCloseToMarker(markerInfo);
-                // PATCH change to API
-                // Update marker
+                  this.setState((oldState) => {
+                    const newState = { ...oldState };
+                    newState.selectedMarker = this.locations[index];
+                    return newState;
+                  });
+                  const markerInfo = this.locations[index];
+                  this.isCloseToMarker(markerInfo);
+                  // PATCH change to API
+                  // Update marker
 
-                if (markerInfo.visited) return;
-                // this.sendPatch(markerInfo.id);
-              }
+                  if (markerInfo.visited) return;
+                  // this.sendPatch(markerInfo.id);
+                }
           }
-        /*eslint-enable */
+          /*eslint-enable */
         />
       );
     });
@@ -68,7 +68,7 @@ class DetailsScreen extends React.Component {
     axios
       .patch(
         `https://cc4-flower-dev.herokuapp.com/location/${
-        this.props.userID
+          this.props.userID
         }/${id}`,
         {
           visited: true
@@ -101,7 +101,7 @@ class DetailsScreen extends React.Component {
         Alert.alert(
           "Connection error",
           "There is a problem with the internet connection. Please try again later.",
-          [{ text: "OK", onPress: () => { } }]
+          [{ text: "OK", onPress: () => {} }]
         );
       });
   }
@@ -184,9 +184,9 @@ class DetailsScreen extends React.Component {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in km
     return d; //Distance in meter
