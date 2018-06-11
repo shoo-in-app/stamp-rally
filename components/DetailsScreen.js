@@ -45,9 +45,6 @@ class DetailsScreen extends React.Component {
                     return newState;
                   });
                   const markerInfo = this.locations[index];
-                  console.log("makerInfo: ", markerInfo);
-                  console.log("id:", this.props.userID);
-                  console.log("location:", this.locations);
                   this.isCloseToMarker(markerInfo);
                   // PATCH change to API
                   // Update marker
