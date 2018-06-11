@@ -1,12 +1,10 @@
 import React from "react";
 import { MapView } from "expo";
-import PropTypes from "prop-types";
-import { Platform, StyleSheet, Text, View, Button, Alert } from "react-native";
+import { Platform, StyleSheet, View, Alert } from "react-native";
 import { Constants, Location, Permissions } from "expo";
 import axios from "axios";
 
 import RallyDetails from "./RallyDetails";
-import LoginScreen from "./LoginScreen";
 let timeoutID;
 
 class DetailsScreen extends React.Component {
@@ -111,16 +109,6 @@ class DetailsScreen extends React.Component {
   };
 
   componentDidMount() {
-    timeoutID = setTimeout(() => {
-      this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
-    }, 1);
-  }
-
-  componentWillUnmount() {
-    if (timeoutID) clearTimeout(timeoutID);
-  }
-
-  componentWillMount() {
     if (Platform.OS === "android" && !Constants.isDevice) {
       this.setState({
         errorMessage:
@@ -129,6 +117,13 @@ class DetailsScreen extends React.Component {
     } else {
       this._getLocationAsync();
     }
+    timeoutID = setTimeout(() => {
+      this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
+    }, 1);
+  }
+
+  componentWillUnmount() {
+    if (timeoutID) clearTimeout(timeoutID);
   }
 
   _getLocationAsync = async () => {
@@ -160,7 +155,7 @@ class DetailsScreen extends React.Component {
         distanceInterval: 1,
         timeInterval: 200
       },
-      (loccation) => {
+      (location) => {
         alert("updated!!");
         const updateLocation = (
           <MapView.Marker

@@ -30,7 +30,6 @@ export default class HomeScreen extends React.Component {
     fetch(`https://cc4-flower-dev.herokuapp.com/rallies/${this.props.userID}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("data", data);
         this.props.loadChosenRallies(data.chosen);
         this.props.loadNotChosenRallies(data.notChosen);
       });
@@ -90,6 +89,7 @@ const styles = StyleSheet.create({
 });
 
 HomeScreen.propTypes = {
+  userID: PropTypes.number.isRequired,
   setUserID: PropTypes.func.isRequired,
   loadChosenRallies: PropTypes.func.isRequired,
   loadNotChosenRallies: PropTypes.func.isRequired,

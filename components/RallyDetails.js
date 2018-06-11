@@ -7,7 +7,6 @@ export default class RallyDetails extends React.Component {
     super(props);
   }
 
-
   render() {
     if (this.props.selectedMarker) {
       return (
@@ -21,9 +20,15 @@ export default class RallyDetails extends React.Component {
             </View>
             <View style={styles.col2}>
               {this.isCloseEnough}
-              <Button key={this.props.selectedMarker.id.toString()} disabled={this.props.disabled} style={styles.button} title="Collect" onPress={() => {
-                console.log('You clicked: ', this.props.selectedMarker);
-              }} />
+              <Button
+                key={this.props.selectedMarker.id.toString()}
+                disabled={this.props.disabled}
+                style={styles.button}
+                title="Collect"
+                onPress={() => {
+                  console.log("You clicked: ", this.props.selectedMarker);
+                }}
+              />
             </View>
           </View>
         </View>
@@ -39,22 +44,23 @@ const styles = StyleSheet.create({
     flex: 0,
     height: 100,
     justifyContent: "flex-start",
-    alignItems: "flex-start",
+    alignItems: "flex-start"
   },
   inlineContainer: {
-    flexDirection: 'row'
+    flexDirection: "row"
   },
   col1: {
-    flex: 0.6,
+    flex: 0.6
   },
   col2: {
-    flex: 0.4,
+    flex: 0.4
   },
   description: {
-    fontSize: 15,
+    fontSize: 15
   }
 });
 
 RallyDetails.propTypes = {
-  selectedMarker: PropTypes.object,
+  disabled: PropTypes.bool,
+  selectedMarker: PropTypes.object
 };
