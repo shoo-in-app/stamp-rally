@@ -1,11 +1,12 @@
 import React from "react";
 import { MapView } from "expo";
+import PropTypes from "prop-types";
 import { Platform, StyleSheet, Text, View, Button, Alert } from "react-native";
 import { Constants, Location, Permissions } from 'expo';
 import axios from "axios";
 
 import RallyDetails from "./RallyDetails";
-
+import LoginScreen from "./LoginScreen";
 let timeoutID;
 
 class DetailsScreen extends React.Component {
@@ -14,7 +15,6 @@ class DetailsScreen extends React.Component {
     this.mapRef = null;
     this.locations = this.props.navigation.getParam("locations", []);
     this.markerIDs = [];
-    console.log('this.locations: ', this.locations);
     this.markers = this.locations.map((location, index) => {
       this.markerIDs.push(location.id.toString());
       return (
@@ -45,13 +45,15 @@ class DetailsScreen extends React.Component {
                   return newState;
                 });
                 const markerInfo = this.locations[index];
+                console.log('makerInfo: ', markerInfo);
+                this.isCloseToMarker(markerInfo);
                 // PATCH change to API
                 // Update marker
 
                 if (markerInfo.visited) return;
                 axios
                   .patch(
-                    `https://cc4-flower-dev.herokuapp.com/location/${
+                    `http://localhost:8000/location/${
                     markerInfo.user_id
                     }/${markerInfo.location_id}`,
                     {
@@ -96,8 +98,11 @@ class DetailsScreen extends React.Component {
     });
     this.state = {
       markers: this.markers,
-      selectedMarker: null
+      selectedMarker: null,
+      disabled: true
     };
+    this.distance = this.distance.bind(this);
+    this.isCloseToMarker = this.isCloseToMarker.bind(this);
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -146,7 +151,57 @@ class DetailsScreen extends React.Component {
     let markers = this.state.markers.slice();
     markers.push(userLocation);
     this.setState({ markers });
+
+    await Location.watchPositionAsync({
+      enableHighAccuracy: true,
+      distanceInterval: 1,
+      timeInterval: 200
+    }, (loccation) => {
+      alert("updated!!");
+      const updateLocation = <MapView.Marker
+        key={location.identifier}
+        identifier={location.identifier}
+        coordinate={location.coords}
+        title="Your location"
+        description="This is your current location"
+        pinColor="blue"
+      />;
+      let markers = this.state.markers.slice();
+      markers.splice(-1, 1, updateLocation);
+      this.setState({ markers });
+    });
   };
+
+  distance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180)
+    const dLon = (lon2 - lon1) * (Math.PI / 180)
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1) * (Math.PI / 180)) * Math.cos((lat2) * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    return d * 1000;//Distance in meter
+  }
+
+  isCloseToMarker(markerInfo) {
+    // user location marker
+    const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
+    // the other location markers
+    const distance = this.distance(markerInfo.lat, markerInfo.lng, userCoords.latitude, userCoords.longitude);
+    if (distance < 5) {
+      if (this.state.selectedMarker === null) {
+        return this.setState({ disabled: true });
+      }
+      else {
+        if (this.state.selectedMarker
+          && this.state.selectedMarker.id === markerInfo.id) {
+          return this.setState({ disabled: false });
+        }
+      }
+    }
+  }
 
   render() {
     return (
@@ -159,7 +214,7 @@ class DetailsScreen extends React.Component {
         >
           {this.state.markers}
         </MapView>
-        <RallyDetails selectedMarker={this.state.selectedMarker} />
+        <RallyDetails selectedMarker={this.state.selectedMarker} disabled={this.state.disabled} />
       </View>
     );
   }
@@ -175,3 +230,7 @@ const styles = StyleSheet.create({
 });
 
 export default DetailsScreen;
+
+// DetailsScreen.propTypes = {
+//   userID: PropTypes.string,
+// };
