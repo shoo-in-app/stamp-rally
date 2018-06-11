@@ -12,6 +12,7 @@ export default class LoginScreen extends React.Component {
 
   componentDidMount() {
     if (this.props.userID) {
+      // console.log('15: ', this.props.userID);
       this.props.navigation.navigate("Home");
     }
   }
@@ -27,12 +28,13 @@ export default class LoginScreen extends React.Component {
       .then((result) => {
         if (result.type === "success") {
           const body = {
-            idToken: result.idToken,
+            idToken: result.idToken.substring(0, 50),
             username: result.user.email.split("@")[0]
           };
           Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
             .then(() => {
-              this.props.setUserID(result.idToken);
+              console.log("36: ", result.idToken.substring(0, 50));
+              this.props.setUserID(result.idToken.substring(0, 50));
               this.props.navigation.navigate("Home");
             })
             .catch(() => {

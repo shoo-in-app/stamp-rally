@@ -30,66 +30,66 @@ class DetailsScreen extends React.Component {
             /*eslint-disable */
             location.visited
               ? () => {
-                  this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
-                  });
-                }
+                this.setState((oldState) => {
+                  const newState = { ...oldState };
+                  newState.selectedMarker = this.locations[index];
+                  return newState;
+                });
+              }
               : () => {
-                  this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
-                  });
-                  const markerInfo = this.locations[index];
-                  this.isCloseToMarker(markerInfo);
-                  // PATCH change to API
-                  // Update marker
+                this.setState((oldState) => {
+                  const newState = { ...oldState };
+                  newState.selectedMarker = this.locations[index];
+                  return newState;
+                });
+                const markerInfo = this.locations[index];
+                this.isCloseToMarker(markerInfo);
+                // PATCH change to API
+                // Update marker
 
-                  if (markerInfo.visited) return;
-                  axios
-                    .patch(
-                      `https://cc4-flower-dev.herokuapp.com/${
-                        this.props.userID
-                      }/${markerInfo.id}`,
-                      {
-                        visited: true
-                      }
-                    )
-                    .then(() => {
-                      this.setState((oldState) => {
-                        const newState = { ...oldState };
-                        const newMarker = newState.markers[index].props;
-                        newState.markers[index] = (
-                          <MapView.Marker
-                            key={newMarker.identifier}
-                            identifier={newMarker.identifier}
-                            coordinate={newMarker.coordinate}
-                            description={newMarker.description}
-                            pinColor="green"
-                            onPress={() => {
-                              this.setState((oldState) => {
-                                const newState = { ...oldState };
-                                newState.selectedMarker = this.locations[index];
-                                return newState;
-                              });
-                            }}
-                          />
-                        );
-                        return newState;
-                      });
-                    })
-                    .catch(() => {
-                      Alert.alert(
-                        "Connection error",
-                        "There is a problem with the internet connection. Please try again later.",
-                        [{ text: "OK", onPress: () => {} }]
+                if (markerInfo.visited) return;
+                axios
+                  .patch(
+                    `https://cc4-flower-dev.herokuapp.com/location/${
+                    this.props.userID
+                    }/${markerInfo.id}`,
+                    {
+                      visited: true
+                    }
+                  )
+                  .then(() => {
+                    this.setState((oldState) => {
+                      const newState = { ...oldState };
+                      const newMarker = newState.markers[index].props;
+                      newState.markers[index] = (
+                        <MapView.Marker
+                          key={newMarker.identifier}
+                          identifier={newMarker.identifier}
+                          coordinate={newMarker.coordinate}
+                          description={newMarker.description}
+                          pinColor="green"
+                          onPress={() => {
+                            this.setState((oldState) => {
+                              const newState = { ...oldState };
+                              newState.selectedMarker = this.locations[index];
+                              return newState;
+                            });
+                          }}
+                        />
                       );
+                      return newState;
                     });
-                }
+                  })
+                  .catch(() => {
+                    Alert.alert(
+                      "Connection error",
+                      "There is a problem with the internet connection. Please try again later.",
+                      [{ text: "OK", onPress: () => { } }]
+                    );
+                  });
+              }
           }
-          /*eslint-enable */
+        /*eslint-enable */
         />
       );
     });
@@ -181,9 +181,9 @@ class DetailsScreen extends React.Component {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in km
     return d; //Distance in meter
