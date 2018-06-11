@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
 });
 
 HomeScreen.propTypes = {
-  userID: PropTypes.number.isRequired,
+  userID: PropTypes.string.isRequired,
   setUserID: PropTypes.func.isRequired,
   loadChosenRallies: PropTypes.func.isRequired,
   loadNotChosenRallies: PropTypes.func.isRequired,
