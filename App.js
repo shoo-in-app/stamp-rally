@@ -16,7 +16,7 @@ const store = createStore(persistedReducer);
 const persistor = persistStore(store);
 
 import HomeScreen from "./containers/HomeScreen";
-import DetailsScreen from "./components/DetailsScreen";
+import DetailsScreen from "./containers/DetailsScreen";
 import LoginScreen from "./containers/LoginScreen";
 
 const RootStack = createStackNavigator(
