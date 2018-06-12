@@ -1,12 +1,13 @@
 import React from "react";
 import { MapView } from "expo";
-import { Platform, StyleSheet, Text, View, Button, Alert } from "react-native";
-import { Constants, Location, Permissions } from 'expo';
+import { StyleSheet, View, Alert } from "react-native";
+import { Location, Permissions } from "expo";
 import axios from "axios";
 
 import RallyDetails from "./RallyDetails";
 
 let timeoutID;
+let locationSubscription = { remove: () => {} };
 
 class DetailsScreen extends React.Component {
   constructor(props) {
@@ -14,7 +15,6 @@ class DetailsScreen extends React.Component {
     this.mapRef = null;
     this.locations = this.props.navigation.getParam("locations", []);
     this.markerIDs = [];
-    console.log('this.locations: ', this.locations);
     this.markers = this.locations.map((location, index) => {
       this.markerIDs.push(location.id.toString());
       return (
@@ -32,72 +32,75 @@ class DetailsScreen extends React.Component {
             /*eslint-disable */
             location.visited
               ? () => {
-                this.setState((oldState) => {
-                  const newState = { ...oldState };
-                  newState.selectedMarker = this.locations[index];
-                  return newState;
-                });
-              }
-              : () => {
-                this.setState((oldState) => {
-                  const newState = { ...oldState };
-                  newState.selectedMarker = this.locations[index];
-                  return newState;
-                });
-                const markerInfo = this.locations[index];
-                // PATCH change to API
-                // Update marker
-
-                if (markerInfo.visited) return;
-                axios
-                  .patch(
-                    `https://cc4-flower-dev.herokuapp.com/location/${
-                    markerInfo.user_id
-                    }/${markerInfo.location_id}`,
-                    {
-                      visited: true
-                    }
-                  )
-                  .then(() => {
-                    this.setState((oldState) => {
-                      const newState = { ...oldState };
-                      const newMarker = newState.markers[index].props;
-                      newState.markers[index] = (
-                        <MapView.Marker
-                          key={newMarker.identifier}
-                          identifier={newMarker.identifier}
-                          coordinate={newMarker.coordinate}
-                          description={newMarker.description}
-                          pinColor="green"
-                          onPress={() => {
-                            this.setState((oldState) => {
-                              const newState = { ...oldState };
-                              newState.selectedMarker = this.locations[index];
-                              return newState;
-                            });
-                          }}
-                        />
-                      );
-                      return newState;
-                    });
-                  })
-                  .catch(() => {
-                    Alert.alert(
-                      "Connection error",
-                      "There is a problem with the internet connection. Please try again later.",
-                      [{ text: "OK", onPress: () => { } }]
-                    );
+                  this.setState((oldState) => {
+                    const newState = { ...oldState };
+                    newState.selectedMarker = this.locations[index];
+                    return newState;
                   });
-              }
+                }
+              : () => {
+                  this.setState((oldState) => {
+                    const newState = { ...oldState };
+                    newState.selectedMarker = this.locations[index];
+                    return newState;
+                  });
+                  const markerInfo = this.locations[index];
+                  // PATCH change to API
+                  // Update marker
+
+                  if (markerInfo.visited) return;
+                  axios
+                    .patch(
+                      `https://cc4-flower-dev.herokuapp.com/location/${
+                        markerInfo.user_id
+                      }/${markerInfo.location_id}`,
+                      {
+                        visited: true
+                      }
+                    )
+                    .then(() => {
+                      this.setState((oldState) => {
+                        const newState = { ...oldState };
+                        const newMarker = newState.markers[index].props;
+                        newState.markers[index] = (
+                          <MapView.Marker
+                            key={newMarker.identifier}
+                            identifier={newMarker.identifier}
+                            coordinate={newMarker.coordinate}
+                            description={newMarker.description}
+                            pinColor="green"
+                            onPress={() => {
+                              this.setState((oldState) => {
+                                const newState = { ...oldState };
+                                newState.selectedMarker = this.locations[index];
+                                return newState;
+                              });
+                            }}
+                          />
+                        );
+                        return newState;
+                      });
+                    })
+                    .catch(() => {
+                      Alert.alert(
+                        "Connection error",
+                        "There is a problem with the internet connection. Please try again later.",
+                        [{ text: "OK", onPress: () => {} }]
+                      );
+                    });
+                }
           }
-        /*eslint-enable */
+          /*eslint-enable */
         />
       );
     });
     this.state = {
       markers: this.markers,
-      selectedMarker: null
+      selectedMarker: null,
+      currentLocation: null
     };
+
+    this.updateLocation = this.updateLocation.bind(this);
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -106,47 +109,44 @@ class DetailsScreen extends React.Component {
     };
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     timeoutID = setTimeout(() => {
       this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
     }, 1);
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== "granted") {
+      Alert.alert(
+        "Unable to locate",
+        "Please grant location permissions to be able to collect stamps.",
+        [{ text: "OK", onPress: () => {} }]
+      );
+    }
+    locationSubscription = await Location.watchPositionAsync(
+      {},
+      this.updateLocation
+    );
   }
 
   componentWillUnmount() {
     if (timeoutID) clearTimeout(timeoutID);
+    locationSubscription.remove();
   }
 
-  componentWillMount() {
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
-    } else {
-      this._getLocationAsync();
-    }
+  updateLocation(locationInfo) {
+    const locationMarker = (
+      <MapView.Marker
+        key="userLocation"
+        identifier={"userLocation"}
+        coordinate={locationInfo.coords}
+        title="Your location"
+        description="This is your current location"
+        pinColor="blue"
+      />
+    );
+    this.setState({
+      currentLocation: locationMarker
+    });
   }
-
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
-      });
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    const userLocation = <MapView.Marker
-      key={location.identifier}
-      identifier={location.identifier}
-      coordinate={location.coords}
-      title="Your location"
-      description="This is your current location"
-      pinColor="blue"
-    />;
-    let markers = this.state.markers.slice();
-    markers.push(userLocation);
-    this.setState({ markers });
-  };
 
   render() {
     return (
@@ -157,7 +157,7 @@ class DetailsScreen extends React.Component {
             this.mapRef = ref;
           }}
         >
-          {this.state.markers}
+          {[...this.state.markers, this.state.currentLocation]}
         </MapView>
         <RallyDetails selectedMarker={this.state.selectedMarker} />
       </View>
