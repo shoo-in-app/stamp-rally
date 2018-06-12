@@ -1,6 +1,6 @@
 import React from "react";
 import { MapView } from "expo";
-import { Platform, StyleSheet, View, Alert } from "react-native";
+import { Button, Platform, StyleSheet, View, Alert } from "react-native";
 import { Constants, Location, Permissions } from "expo";
 import axios from "axios";
 
@@ -11,7 +11,9 @@ class DetailsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.mapRef = null;
+    this.rallyID = this.props.navigation.getParam("rallyID", null);
     this.locations = this.props.navigation.getParam("locations", []);
+    this.notChosenRally = this.locations[0].visited === undefined;
     this.markerIDs = [];
     this.markers = this.locations.map((location, index) => {
       this.markerIDs.push(location.id.toString());
@@ -193,6 +195,7 @@ class DetailsScreen extends React.Component {
   }
 
   isCloseToMarker(markerInfo) {
+    if (this.notChosenRally) return;
     // user location marker
     const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
     // the other location markers
@@ -216,6 +219,27 @@ class DetailsScreen extends React.Component {
     }
   }
 
+  get confirmView() {
+    if (this.notChosenRally)
+      return (
+        <View>
+          <Button
+            title="Choose this Rally"
+            onPress={() => {
+              axios.patch(
+                `https://cc4-flower-dev.herokuapp.com/rally/${
+                  this.props.userID
+                }/${this.rallyID}`,
+                {
+                  chosen: true
+                }
+              );
+            }}
+          />
+        </View>
+      );
+  }
+
   render() {
     return (
       <View style={{ flex: 1, flexDirection: "column" }}>
@@ -231,6 +255,7 @@ class DetailsScreen extends React.Component {
           disabled={this.state.disabled}
           sendPatch={this.sendPatch}
         />
+        {this.confirmView}
       </View>
     );
   }

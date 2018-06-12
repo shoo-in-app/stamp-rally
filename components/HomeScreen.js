@@ -54,6 +54,7 @@ export default class HomeScreen extends React.Component {
                 button
                 onPress={() =>
                   this.props.navigation.navigate("Details", {
+                    rallyID: item.id,
                     title: item.title,
                     locations: item.locations
                   })
