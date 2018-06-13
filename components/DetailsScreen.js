@@ -161,7 +161,6 @@ class DetailsScreen extends React.Component {
         timeInterval: 200
       },
       (location) => {
-        alert("updated!!");
         const updateLocation = (
           <MapView.Marker
             key={location.identifier}
