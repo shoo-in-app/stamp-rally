@@ -178,7 +178,15 @@ export default class HomeScreen extends React.Component {
       // </ListView>
       <SectionList
         renderSectionHeader={({ section: { title } }) => (
-          <Text style={{ fontWeight: "bold" }}>{title}</Text>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 20,
+              backgroundColor: "white"
+            }}
+          >
+            {title}
+          </Text>
         )}
         refreshControl={
           <RefreshControl
