@@ -15,9 +15,10 @@ module.exports = {
   },
   plugins: ["react", "react-native"],
   rules: {
-    indent: ["error", 2],
+    indent: ["error", 2, { SwitchCase: 1 }],
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double"],
-    semi: ["error", "always"]
+    semi: ["error", "always"],
+    "react/prop-types": ["error", { ignore: ["navigation"] }]
   }
 };

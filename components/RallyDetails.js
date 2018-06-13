@@ -1,15 +1,41 @@
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import PropTypes from "prop-types";
+import { Button, StyleSheet, Text, View } from "react-native";
 
 export default class RallyDetails extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     if (this.props.selectedMarker) {
       return (
         <View style={styles.container}>
           <Text style={styles.title}>{this.props.selectedMarker.name}</Text>
-          <Text style={styles.description}>
-            {this.props.selectedMarker.description}
-          </Text>
+          <View style={styles.inlineContainer}>
+            <View style={styles.col1}>
+              <Text style={styles.description}>
+                {this.props.selectedMarker.description}
+              </Text>
+            </View>
+            <View style={styles.col2}>
+              <Button
+                key={this.props.selectedMarker.id.toString()}
+                disabled={
+                  this.props.selectedMarker.visited || this.props.disabled
+                }
+                style={styles.button}
+                title={
+                  this.props.selectedMarker.visited
+                    ? "ALREADY COLLECTED!!"
+                    : "COLLECT"
+                }
+                onPress={() =>
+                  this.props.sendPatch(this.props.selectedMarker.id)
+                }
+              />
+            </View>
+          </View>
         </View>
       );
     } else {
@@ -25,18 +51,22 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start"
   },
-  placeholder: {
-    flex: 0,
-    height: 100,
-    fontSize: 20,
-    textAlign: "center"
+  inlineContainer: {
+    flexDirection: "row"
   },
-  title: {
-    fontSize: 20,
-    margin: 10
+  col1: {
+    flex: 0.6
+  },
+  col2: {
+    flex: 0.4
   },
   description: {
-    fontSize: 15,
-    margin: 10
+    fontSize: 15
   }
 });
+
+RallyDetails.propTypes = {
+  disabled: PropTypes.bool,
+  selectedMarker: PropTypes.object,
+  sendPatch: PropTypes.func
+};
