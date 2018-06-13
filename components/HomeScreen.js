@@ -1,13 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  StyleSheet,
-  ListView,
-  FlatList,
-  Button,
-  RefreshControl,
-  SectionList
-} from "react-native";
+import { StyleSheet, Button, RefreshControl, SectionList } from "react-native";
 import { Text, ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
@@ -50,73 +43,6 @@ export default class HomeScreen extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-  }
-
-  getRallies(rallies) {
-    if (rallies.length === 0) {
-      return <Text>You have no rallies.</Text>;
-    } else {
-      // return (
-      //   <FlatList
-      //     keyExtractor={(_, index) => {
-      //       return index.toString();
-      //     }}
-      //     data={rallies}
-      //     renderItem={({ item }) => {
-      //       const total = item.locations.length;
-      //       const progress = item.locations.filter((l) => l.visited).length;
-      //       return (
-      //         <ListItem
-      //           title={item.title}
-      //           button
-      //           onPress={() =>
-      //             this.props.navigation.navigate("Details", {
-      //               rallyID: item.id,
-      //               title: item.title,
-      //               locations: item.locations
-      //             })
-      //           }
-      //           subtitle={item.description}
-      //           badge={{
-      //             value: `${progress}/${total}`,
-      //             containerStyle: {
-      //               marginTop: 0,
-      //               backgroundColor: total === progress ? "dodgerblue" : "gray"
-      //             }
-      //           }}
-      //         />
-      //       );
-      //     }}
-      //   />
-      // );
-
-      return rallies.map((item) => {
-        const total = item.locations.length;
-        const progress = item.locations.filter((l) => l.visited).length;
-        return (
-          <ListItem
-            key={item.id}
-            title={item.title}
-            button
-            onPress={() =>
-              this.props.navigation.navigate("Details", {
-                rallyID: item.id,
-                title: item.title,
-                locations: item.locations
-              })
-            }
-            subtitle={item.description}
-            badge={{
-              value: `${progress}/${total}`,
-              containerStyle: {
-                marginTop: 0,
-                backgroundColor: total === progress ? "dodgerblue" : "gray"
-              }
-            }}
-          />
-        );
-      });
-    }
   }
 
   getRally(data) {
@@ -162,20 +88,6 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      // <ListView
-      //   refreshControl={
-      //     <RefreshControl
-      //       refreshing={this.state.refreshing}
-      //       onRefresh={this._onRefresh.bind(this)}
-      //     />
-      //   }
-      //   style={styles.container}
-      // >
-      //   <Text h3>Your Rallies</Text>
-      //   {this.getRallies(this.props.chosenRallies)}
-      //   <Text h3>Find Other Rallies</Text>
-      //   {this.getRallies(this.props.notChosenRallies)}
-      // </ListView>
       <SectionList
         renderSectionHeader={({ section: { title } }) => (
           <Text
