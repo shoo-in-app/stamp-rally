@@ -106,7 +106,7 @@ export default class HomeScreen extends React.Component {
             onRefresh={this._onRefresh.bind(this)}
           />
         }
-        // keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={(data) => this.getRally(data)}
         sections={[
           {

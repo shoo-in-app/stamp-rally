@@ -1,8 +1,12 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { MapView } from "expo";
 import { Button, Platform, StyleSheet, View, Alert } from "react-native";
 import { Constants, Location, Permissions } from "expo";
 import axios from "axios";
+
+import uncollectedStamp from "../assets/markers/stamp-uncollected.png";
+import collectedStamp from "../assets/markers/stamp-collected.png";
 
 import RallyDetails from "./RallyDetails";
 let timeoutID;
@@ -27,40 +31,27 @@ class DetailsScreen extends React.Component {
           }}
           title={location.title}
           description={location.description}
-          pinColor={location.visited ? "green" : "red"}
-          onPress={
-            /*eslint-disable */
-            location.visited
-              ? () => {
-                  this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
-                  });
-                }
-              : () => {
-                  this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
-                  });
-                  const markerInfo = this.locations[index];
-                  this.isCloseToMarker(markerInfo);
-                  // PATCH change to API
-                  // Update marker
-
-                  if (markerInfo.visited) return;
-                  // this.sendPatch(markerInfo.id);
-                }
-          }
-          /*eslint-enable */
+          image={location.visited ? collectedStamp : uncollectedStamp}
+          onPress={() => {
+            this.setState((oldState) => {
+              return {
+                ...oldState,
+                selectedMarker: this.locations[index]
+              };
+            });
+            if (!location.visited) {
+              const markerInfo = this.locations[index];
+              this.isCloseToMarker(markerInfo);
+            }
+          }}
         />
       );
     });
     this.state = {
       markers: this.markers,
       selectedMarker: null,
-      disabled: true
+      disabled: true,
+      userLocation: null
     };
     this.distance = this.distance.bind(this);
     this.isCloseToMarker = this.isCloseToMarker.bind(this);
@@ -79,23 +70,7 @@ class DetailsScreen extends React.Component {
       .then(() => {
         this.setState((oldState) => {
           const newState = { ...oldState };
-          const newMarker = newState.markers[id - 1].props;
-          newState.markers[id - 1] = (
-            <MapView.Marker
-              key={newMarker.identifier}
-              identifier={newMarker.identifier}
-              coordinate={newMarker.coordinate}
-              description={newMarker.description}
-              pinColor="green"
-              onPress={() => {
-                this.setState((oldState) => {
-                  const newState = { ...oldState };
-                  newState.selectedMarker = this.locations[id - 1];
-                  return newState;
-                });
-              }}
-            />
-          );
+          newState.markers[id - 1].props.image = collectedStamp;
           return newState;
         });
       })
@@ -139,21 +114,6 @@ class DetailsScreen extends React.Component {
       });
     }
 
-    let location = await Location.getCurrentPositionAsync({});
-    const userLocation = (
-      <MapView.Marker
-        key={location.identifier}
-        identifier={location.identifier}
-        coordinate={location.coords}
-        title="Your location"
-        description="This is your current location"
-        pinColor="blue"
-      />
-    );
-    let markers = this.state.markers.slice();
-    markers.push(userLocation);
-    this.setState({ markers });
-
     await Location.watchPositionAsync(
       {
         enableHighAccuracy: true,
@@ -161,9 +121,9 @@ class DetailsScreen extends React.Component {
         timeInterval: 200
       },
       (location) => {
-        const updateLocation = (
+        const userLocation = (
           <MapView.Marker
-            key={location.identifier}
+            key={"userLocation"}
             identifier={location.identifier}
             coordinate={location.coords}
             title="Your location"
@@ -171,9 +131,7 @@ class DetailsScreen extends React.Component {
             pinColor="blue"
           />
         );
-        let markers = this.state.markers.slice();
-        markers.splice(-1, 1, updateLocation);
-        this.setState({ markers });
+        this.setState({ userLocation });
       }
     );
   };
@@ -196,7 +154,7 @@ class DetailsScreen extends React.Component {
   isCloseToMarker(markerInfo) {
     if (this.notChosenRally) return;
     // user location marker
-    const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
+    const userCoords = this.state.userLocation.props.coordinate;
     // the other location markers
     const distance = this.distance(
       markerInfo.lat,
@@ -205,16 +163,7 @@ class DetailsScreen extends React.Component {
       userCoords.longitude
     );
     if (distance < 5) {
-      if (this.state.selectedMarker === null) {
-        return this.setState({ disabled: true });
-      } else {
-        if (
-          this.state.selectedMarker &&
-          this.state.selectedMarker.id === markerInfo.id
-        ) {
-          return this.setState({ disabled: false });
-        }
-      }
+      this.setState({ disabled: false });
     }
   }
 
@@ -248,7 +197,7 @@ class DetailsScreen extends React.Component {
             this.mapRef = ref;
           }}
         >
-          {this.state.markers}
+          {[...this.state.markers, this.state.userLocation]}
         </MapView>
         <RallyDetails
           selectedMarker={this.state.selectedMarker}
@@ -272,6 +221,6 @@ const styles = StyleSheet.create({
 
 export default DetailsScreen;
 
-// DetailsScreen.propTypes = {
-//   userID: PropTypes.string,
-// };
+DetailsScreen.propTypes = {
+  userID: PropTypes.string
+};
