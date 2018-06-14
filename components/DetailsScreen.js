@@ -79,23 +79,7 @@ class DetailsScreen extends React.Component {
       .then(() => {
         this.setState((oldState) => {
           const newState = { ...oldState };
-          const newMarker = newState.markers[id - 1].props;
-          newState.markers[id - 1] = (
-            <MapView.Marker
-              key={newMarker.identifier}
-              identifier={newMarker.identifier}
-              coordinate={newMarker.coordinate}
-              description={newMarker.description}
-              pinColor="green"
-              onPress={() => {
-                this.setState((oldState) => {
-                  const newState = { ...oldState };
-                  newState.selectedMarker = this.locations[id - 1];
-                  return newState;
-                });
-              }}
-            />
-          );
+          newState.markers[id - 1].props.pinColor = "green";
           return newState;
         });
       })
