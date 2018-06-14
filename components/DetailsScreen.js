@@ -32,11 +32,15 @@ class DetailsScreen extends React.Component {
           title={location.title}
           description={location.description}
           image={location.visited ? collectedStamp : uncollectedStamp}
-          onPress={() => {
+          onPress={(event) => {
+            console.log(event.nativeEvent);
+            const selectedMarker = this.state.markers.find(
+              (marker) => marker.key === event.nativeEvent.id
+            );
             this.setState((oldState) => {
               return {
                 ...oldState,
-                selectedMarker: this.locations[index]
+                selectedMarker
               };
             });
             if (!location.visited) {
@@ -200,7 +204,12 @@ class DetailsScreen extends React.Component {
           {[...this.state.markers, this.state.userLocation]}
         </MapView>
         <RallyDetails
-          selectedMarker={this.state.selectedMarker}
+          selectedMarker={
+            this.locations.find((location) => {
+              if (!this.selectedMarker) return false;
+              return location.id === this.state.selectedMarker.key;
+            }) || null
+          }
           disabled={this.state.disabled}
           sendPatch={this.sendPatch}
         />
