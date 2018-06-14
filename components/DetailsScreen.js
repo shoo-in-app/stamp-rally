@@ -85,7 +85,7 @@ class DetailsScreen extends React.Component {
       .then(() => {
         this.setState((oldState) => {
           const newState = { ...oldState };
-          newState.markers[id - 1].props.pinColor = "green";
+          newState.markers[id - 1].props.image = collectedStamp;
           return newState;
         });
       })
@@ -129,21 +129,6 @@ class DetailsScreen extends React.Component {
       });
     }
 
-    let location = await Location.getCurrentPositionAsync({});
-    const userLocation = (
-      <MapView.Marker
-        key={location.identifier}
-        identifier={location.identifier}
-        coordinate={location.coords}
-        title="Your location"
-        description="This is your current location"
-        pinColor="blue"
-      />
-    );
-    let markers = this.state.markers.slice();
-    markers.push(userLocation);
-    this.setState({ markers });
-
     await Location.watchPositionAsync(
       {
         enableHighAccuracy: true,
@@ -153,7 +138,7 @@ class DetailsScreen extends React.Component {
       (location) => {
         const updateLocation = (
           <MapView.Marker
-            key={location.identifier}
+            key={"userLocation"}
             identifier={location.identifier}
             coordinate={location.coords}
             title="Your location"
