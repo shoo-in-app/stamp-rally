@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { MapView } from "expo";
 import { Button, Platform, StyleSheet, View, Alert } from "react-native";
 import { Constants, Location, Permissions } from "expo";
@@ -256,6 +257,6 @@ const styles = StyleSheet.create({
 
 export default DetailsScreen;
 
-// DetailsScreen.propTypes = {
-//   userID: PropTypes.string,
-// };
+DetailsScreen.propTypes = {
+  userID: PropTypes.string
+};
