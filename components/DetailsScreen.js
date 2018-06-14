@@ -32,34 +32,18 @@ class DetailsScreen extends React.Component {
           title={location.title}
           description={location.description}
           image={location.visited ? collectedStamp : uncollectedStamp}
-          onPress={
-            /*eslint-disable */
-            location.visited
-              ? () => {
-                  this.setState((oldState) => {
-                    return {
-                      ...oldState,
-                      selectedMarker: this.locations[index]
-                    };
-                  });
-                }
-              : () => {
-                  this.setState((oldState) => {
-                    return {
-                      ...oldState,
-                      selectedMarker: this.locations[index]
-                    };
-                  });
-                  const markerInfo = this.locations[index];
-                  this.isCloseToMarker(markerInfo);
-                  // PATCH change to API
-                  // Update marker
-
-                  if (markerInfo.visited) return;
-                  // this.sendPatch(markerInfo.id);
-                }
-          }
-          /*eslint-enable */
+          onPress={() => {
+            this.setState((oldState) => {
+              return {
+                ...oldState,
+                selectedMarker: this.locations[index]
+              };
+            });
+            if (!location.visited) {
+              const markerInfo = this.locations[index];
+              this.isCloseToMarker(markerInfo);
+            }
+          }}
         />
       );
     });
@@ -170,7 +154,7 @@ class DetailsScreen extends React.Component {
   isCloseToMarker(markerInfo) {
     if (this.notChosenRally) return;
     // user location marker
-    const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
+    const userCoords = this.state.userLocation.props.coordinate;
     // the other location markers
     const distance = this.distance(
       markerInfo.lat,
@@ -179,16 +163,7 @@ class DetailsScreen extends React.Component {
       userCoords.longitude
     );
     if (distance < 5) {
-      if (this.state.selectedMarker === null) {
-        return this.setState({ disabled: true });
-      } else {
-        if (
-          this.state.selectedMarker &&
-          this.state.selectedMarker.id === markerInfo.id
-        ) {
-          return this.setState({ disabled: false });
-        }
-      }
+      this.setState({ disabled: false });
     }
   }
 
