@@ -5,6 +5,9 @@ import { Button, Platform, StyleSheet, View, Alert } from "react-native";
 import { Constants, Location, Permissions } from "expo";
 import axios from "axios";
 
+import uncollectedStamp from "../assets/markers/stamp-uncollected.png";
+import collectedStamp from "../assets/markers/stamp-collected.png";
+
 import RallyDetails from "./RallyDetails";
 let timeoutID;
 
@@ -28,7 +31,7 @@ class DetailsScreen extends React.Component {
           }}
           title={location.title}
           description={location.description}
-          pinColor={location.visited ? "green" : "red"}
+          image={location.visited ? collectedStamp : uncollectedStamp}
           onPress={
             /*eslint-disable */
             location.visited
