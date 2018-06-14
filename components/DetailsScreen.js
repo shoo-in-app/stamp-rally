@@ -37,16 +37,18 @@ class DetailsScreen extends React.Component {
             location.visited
               ? () => {
                   this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
+                    return {
+                      ...oldState,
+                      selectedMarker: this.locations[index]
+                    };
                   });
                 }
               : () => {
                   this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
+                    return {
+                      ...oldState,
+                      selectedMarker: this.locations[index]
+                    };
                   });
                   const markerInfo = this.locations[index];
                   this.isCloseToMarker(markerInfo);
