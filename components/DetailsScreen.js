@@ -66,7 +66,8 @@ class DetailsScreen extends React.Component {
     this.state = {
       markers: this.markers,
       selectedMarker: null,
-      disabled: true
+      disabled: true,
+      userLocation: null
     };
     this.distance = this.distance.bind(this);
     this.isCloseToMarker = this.isCloseToMarker.bind(this);
@@ -136,7 +137,7 @@ class DetailsScreen extends React.Component {
         timeInterval: 200
       },
       (location) => {
-        const updateLocation = (
+        const userLocation = (
           <MapView.Marker
             key={"userLocation"}
             identifier={location.identifier}
@@ -146,9 +147,7 @@ class DetailsScreen extends React.Component {
             pinColor="blue"
           />
         );
-        let markers = this.state.markers.slice();
-        markers.splice(-1, 1, updateLocation);
-        this.setState({ markers });
+        this.setState({ userLocation });
       }
     );
   };
@@ -223,7 +222,7 @@ class DetailsScreen extends React.Component {
             this.mapRef = ref;
           }}
         >
-          {this.state.markers}
+          {[...this.state.markers, this.state.userLocation]}
         </MapView>
         <RallyDetails
           selectedMarker={this.state.selectedMarker}
