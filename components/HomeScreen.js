@@ -128,7 +128,7 @@ export default class HomeScreen extends React.Component {
             data: this.props.chosenRallies
           },
           {
-            title: "Find Other Rallies",
+            title: "Other Rallies",
             data: this.props.notChosenRallies
           }
         ]}
