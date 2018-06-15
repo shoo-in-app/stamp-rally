@@ -23,8 +23,8 @@ export default class HomeScreen extends React.Component {
       <Button
         title="Logout"
         onPress={() => {
-          params.clearCacheOnLogout();
           params.navigate("Login");
+          params.clearCacheOnLogout();
         }}
       />
     );
@@ -37,7 +37,7 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      setUserID: this.props.setUserID,
+      clearCacheOnLogout: this.props.clearCacheOnLogout,
       navigate: this.props.navigation.navigate.bind(this)
     });
     fetch(`https://cc4-flower-dev.herokuapp.com/rallies/${this.props.userID}`)
