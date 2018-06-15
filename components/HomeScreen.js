@@ -1,6 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Button, RefreshControl, SectionList } from "react-native";
+import {
+  StyleSheet,
+  Button,
+  RefreshControl,
+  SectionList,
+  Alert
+} from "react-native";
 import { Text, ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
@@ -82,6 +88,14 @@ export default class HomeScreen extends React.Component {
         this.props.loadNotChosenRallies(data.notChosen);
       })
       .then(() => {
+        this.setState({ refreshing: false });
+      })
+      .catch(() => {
+        Alert.alert(
+          "Connection error",
+          "There is a problem with the internet connection. Please try again later.",
+          [{ text: "OK", onPress: () => {} }]
+        );
         this.setState({ refreshing: false });
       });
   }
