@@ -126,7 +126,7 @@ class DetailsScreen extends React.Component {
     );
   };
 
-  distance(lat1, lon1, lat2, lon2) {
+  distanceToStamp(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
@@ -146,13 +146,13 @@ class DetailsScreen extends React.Component {
     // user location marker
     const userCoords = this.state.userLocation.props.coordinate;
     // the other location markers
-    const distance = this.distance(
+    const distanceToStamp = this.distanceToStamp(
       markerInfo.lat,
       markerInfo.lng,
       userCoords.latitude,
       userCoords.longitude
     );
-    if (distance < 5) {
+    if (distanceToStamp < 5) {
       this.setState({ isWithinRange: false });
     }
   }
