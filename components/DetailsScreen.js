@@ -138,7 +138,7 @@ class DetailsScreen extends React.Component {
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in km
-    return d; //Distance in meter
+    return d * 1000; // Distance in m
   }
 
   isCloseToMarker(markerInfo) {
