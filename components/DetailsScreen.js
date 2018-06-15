@@ -44,12 +44,15 @@ class DetailsScreen extends React.Component {
         />
       );
     });
+
     this.state = {
       markers: this.markers,
       selectedLocation: null,
       isWithinRange: true,
       userLocation: null
     };
+
+    this.collectStamp = this.collectStamp.bind(this);
   }
 
   collectStamp(locationId) {
