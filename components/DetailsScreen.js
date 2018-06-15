@@ -15,9 +15,12 @@ class DetailsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.mapRef = null;
+
     this.rallyID = this.props.navigation.getParam("rallyID", null);
     this.locations = this.props.navigation.getParam("locations", []);
+
     this.isRallyChosen = this.locations[0].visited === undefined;
+
     this.markerIDs = [];
     this.markers = this.locations.map((location) => {
       this.markerIDs.push(location.id.toString());
@@ -33,10 +36,10 @@ class DetailsScreen extends React.Component {
           description={location.description}
           image={location.visited ? collectedStamp : uncollectedStamp}
           onPress={() => {
-            this.setState({ selectedLocation: location });
-            if (!location.visited) {
-              this.isCloseToMarker(location);
-            }
+            this.setState({
+              selectedLocation: location,
+              isWithinRange: this.isWithinRange(location)
+            });
           }}
         />
       );
@@ -48,6 +51,7 @@ class DetailsScreen extends React.Component {
       userLocation: null
     };
   }
+
   sendPatch(id) {
     axios
       .patch(
@@ -138,7 +142,7 @@ class DetailsScreen extends React.Component {
     return d * 1000; // Distance in m
   }
 
-  isCloseToMarker(location) {
+  isWithinRange(location) {
     const COLLECTION_RANGE = 5000;
 
     if (this.isRallyChosen) return;
@@ -152,9 +156,7 @@ class DetailsScreen extends React.Component {
       userCoords.longitude
     );
 
-    if (distanceToStamp < COLLECTION_RANGE) {
-      this.setState({ isWithinRange: false });
-    }
+    return distanceToStamp < COLLECTION_RANGE;
   }
 
   get confirmView() {
@@ -190,7 +192,7 @@ class DetailsScreen extends React.Component {
           {[...this.state.markers, this.state.userLocation]}
         </MapView>
         <RallyDetails
-          selectedMarker={this.state.selectedLocation}
+          selectedLocation={this.state.selectedLocation}
           isWithinRange={this.state.isWithinRange}
           sendPatch={this.sendPatch}
         />
