@@ -1,8 +1,12 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { MapView } from "expo";
 import { Button, Platform, StyleSheet, View, Alert } from "react-native";
 import { Constants, Location, Permissions } from "expo";
 import axios from "axios";
+
+import uncollectedStamp from "../assets/markers/stamp-uncollected.png";
+import collectedStamp from "../assets/markers/stamp-collected.png";
 
 import RallyDetails from "./RallyDetails";
 let timeoutID;
@@ -27,22 +31,24 @@ class DetailsScreen extends React.Component {
           }}
           title={location.title}
           description={location.description}
-          pinColor={location.visited ? "green" : "red"}
+          image={location.visited ? collectedStamp : uncollectedStamp}
           onPress={
             /*eslint-disable */
             location.visited
               ? () => {
                   this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
+                    return {
+                      ...oldState,
+                      selectedMarker: this.locations[index]
+                    };
                   });
                 }
               : () => {
                   this.setState((oldState) => {
-                    const newState = { ...oldState };
-                    newState.selectedMarker = this.locations[index];
-                    return newState;
+                    return {
+                      ...oldState,
+                      selectedMarker: this.locations[index]
+                    };
                   });
                   const markerInfo = this.locations[index];
                   this.isCloseToMarker(markerInfo);
@@ -79,23 +85,7 @@ class DetailsScreen extends React.Component {
       .then(() => {
         this.setState((oldState) => {
           const newState = { ...oldState };
-          const newMarker = newState.markers[id - 1].props;
-          newState.markers[id - 1] = (
-            <MapView.Marker
-              key={newMarker.identifier}
-              identifier={newMarker.identifier}
-              coordinate={newMarker.coordinate}
-              description={newMarker.description}
-              pinColor="green"
-              onPress={() => {
-                this.setState((oldState) => {
-                  const newState = { ...oldState };
-                  newState.selectedMarker = this.locations[id - 1];
-                  return newState;
-                });
-              }}
-            />
-          );
+          newState.markers[id - 1].props.pinColor = "green";
           return newState;
         });
       })
@@ -272,6 +262,6 @@ const styles = StyleSheet.create({
 
 export default DetailsScreen;
 
-// DetailsScreen.propTypes = {
-//   userID: PropTypes.string,
-// };
+DetailsScreen.propTypes = {
+  userID: PropTypes.string
+};
