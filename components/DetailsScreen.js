@@ -96,9 +96,12 @@ class DetailsScreen extends React.Component {
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
-      this.setState({
-        errorMessage: "Permission to access location was denied"
-      });
+      Alert.alert(
+        "Error",
+        "You must grant location permission to this app in order to collect stamps.",
+        [{ text: "OK", onPress: () => {} }]
+      );
+      return;
     }
 
     await Location.watchPositionAsync(
