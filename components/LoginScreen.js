@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Alert } from "react-native";
 import Expo from "expo";
 import Axios from "axios";
 
@@ -26,18 +26,20 @@ export default class LoginScreen extends React.Component {
     })
       .then((result) => {
         if (result.type === "success") {
-          const idToken = result.idToken.split(".")[0];
           const body = {
-            idToken: idToken,
-            username: result.user.email.split("@")[0]
+            email: result.user.email.split("@")[0]
           };
           Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
-            .then(() => {
-              console.log("id", idToken);
-              this.props.setUserID(idToken);
+            .then((res) => {
               this.props.navigation.navigate("Home");
+              this.props.setUserID(res.data.userID);
             })
             .catch(() => {
+              Alert.alert(
+                "Connection error",
+                "There seems to be a problem with the connection to our server. Please try again later.",
+                [{ text: "OK", onPress: () => {} }]
+              );
               this.setState({ cancelled: true });
             });
         } else {
