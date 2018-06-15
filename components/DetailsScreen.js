@@ -19,7 +19,7 @@ class DetailsScreen extends React.Component {
     this.locations = this.props.navigation.getParam("locations", []);
     this.notChosenRally = this.locations[0].visited === undefined;
     this.markerIDs = [];
-    this.markers = this.locations.map((location, index) => {
+    this.markers = this.locations.map((location) => {
       this.markerIDs.push(location.id.toString());
       return (
         <MapView.Marker
@@ -32,20 +32,10 @@ class DetailsScreen extends React.Component {
           title={location.title}
           description={location.description}
           image={location.visited ? collectedStamp : uncollectedStamp}
-          onPress={(event) => {
-            console.log(event.nativeEvent);
-            const selectedMarker = this.state.markers.find(
-              (marker) => marker.key === event.nativeEvent.id
-            );
-            this.setState((oldState) => {
-              return {
-                ...oldState,
-                selectedMarker
-              };
-            });
+          onPress={() => {
+            this.setState({ selectedLocation: location });
             if (!location.visited) {
-              const markerInfo = this.locations[index];
-              this.isCloseToMarker(markerInfo);
+              this.isCloseToMarker(location);
             }
           }}
         />
