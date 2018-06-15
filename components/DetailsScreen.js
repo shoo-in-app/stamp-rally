@@ -47,9 +47,6 @@ class DetailsScreen extends React.Component {
       isWithinRange: true,
       userLocation: null
     };
-    this.distance = this.distance.bind(this);
-    this.isCloseToMarker = this.isCloseToMarker.bind(this);
-    this.sendPatch = this.sendPatch.bind(this);
   }
   sendPatch(id) {
     axios
