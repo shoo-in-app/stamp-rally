@@ -141,18 +141,21 @@ class DetailsScreen extends React.Component {
     return d * 1000; // Distance in m
   }
 
-  isCloseToMarker(markerInfo) {
+  isCloseToMarker(location) {
+    const COLLECTION_RANGE = 5000;
+
     if (this.isRallyChosen) return;
     // user location marker
     const userCoords = this.state.userLocation.props.coordinate;
     // the other location markers
     const distanceToStamp = this.distanceToStamp(
-      markerInfo.lat,
-      markerInfo.lng,
+      location.lat,
+      location.lng,
       userCoords.latitude,
       userCoords.longitude
     );
-    if (distanceToStamp < 5) {
+
+    if (distanceToStamp < COLLECTION_RANGE) {
       this.setState({ isWithinRange: false });
     }
   }
