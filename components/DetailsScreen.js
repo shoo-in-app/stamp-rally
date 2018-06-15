@@ -17,7 +17,7 @@ class DetailsScreen extends React.Component {
     this.mapRef = null;
     this.rallyID = this.props.navigation.getParam("rallyID", null);
     this.locations = this.props.navigation.getParam("locations", []);
-    this.notChosenRally = this.locations[0].visited === undefined;
+    this.isRallyChosen = this.locations[0].visited === undefined;
     this.markerIDs = [];
     this.markers = this.locations.map((location) => {
       this.markerIDs.push(location.id.toString());
@@ -43,8 +43,8 @@ class DetailsScreen extends React.Component {
     });
     this.state = {
       markers: this.markers,
-      selectedMarker: null,
-      disabled: true,
+      selectedLocation: null,
+      isWithinRange: true,
       userLocation: null
     };
     this.distance = this.distance.bind(this);
@@ -83,7 +83,7 @@ class DetailsScreen extends React.Component {
   };
 
   componentDidMount() {
-      this._getLocationAsync();
+    this._getLocationAsync();
     timeoutID = setTimeout(() => {
       this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
     }, 1);
@@ -139,7 +139,7 @@ class DetailsScreen extends React.Component {
   }
 
   isCloseToMarker(markerInfo) {
-    if (this.notChosenRally) return;
+    if (this.isRallyChosen) return;
     // user location marker
     const userCoords = this.state.userLocation.props.coordinate;
     // the other location markers
@@ -150,12 +150,12 @@ class DetailsScreen extends React.Component {
       userCoords.longitude
     );
     if (distance < 5) {
-      this.setState({ disabled: false });
+      this.setState({ isWithinRange: false });
     }
   }
 
   get confirmView() {
-    if (this.notChosenRally)
+    if (this.isRallyChosen)
       return (
         <View>
           <Button
@@ -187,13 +187,8 @@ class DetailsScreen extends React.Component {
           {[...this.state.markers, this.state.userLocation]}
         </MapView>
         <RallyDetails
-          selectedMarker={
-            this.locations.find((location) => {
-              if (!this.selectedMarker) return false;
-              return location.id === this.state.selectedMarker.key;
-            }) || null
-          }
-          disabled={this.state.disabled}
+          selectedMarker={this.state.selectedLocation}
+          isWithinRange={this.state.isWithinRange}
           sendPatch={this.sendPatch}
         />
         {this.confirmView}
