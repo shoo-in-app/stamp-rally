@@ -36,6 +36,10 @@ export default class HomeScreen extends React.Component {
   };
 
   componentDidMount() {
+    reloadData();
+  }
+
+  reloadData() {
     this.props.navigation.setParams({
       clearCacheOnLogout: this.props.clearCacheOnLogout,
       navigate: this.props.navigation.navigate.bind(this)

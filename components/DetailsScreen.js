@@ -66,17 +66,16 @@ class DetailsScreen extends React.Component {
         }
       )
       .then(() => {
-        this.setState((oldState) => {
-          const newState = { ...oldState };
+        
+        // this.setState((oldState) => {
+        //   const newState = { ...oldState };
 
-          const collectedMarker = newState.markers.find(
-            (marker) => marker.identifier === locationId
-          );
+        //   newState.markers.find(
+        //     (marker) => marker.key == locationId
+        //   ).props.image = collectedStampImg;
 
-          collectedMarker.props.image = collectedStampImg;
-
-          return newState;
-        });
+        //   return newState;
+        // });
       })
       .catch(() => {
         Alert.alert(
@@ -198,7 +197,8 @@ class DetailsScreen extends React.Component {
             this.mapRef = ref;
           }}
         >
-          {[...this.state.markers, this.state.userLocation]}
+          {this.state.markers}
+          {this.state.userLocation}
         </MapView>
         <RallyDetails
           selectedLocation={this.state.selectedLocation}
