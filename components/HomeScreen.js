@@ -23,7 +23,7 @@ export default class HomeScreen extends React.Component {
       <Button
         title="Logout"
         onPress={() => {
-          params.setUserID(null);
+          params.clearCacheOnLogout();
           params.navigate("Login");
         }}
       />
@@ -154,5 +154,6 @@ HomeScreen.propTypes = {
   loadChosenRallies: PropTypes.func.isRequired,
   loadNotChosenRallies: PropTypes.func.isRequired,
   chosenRallies: PropTypes.array.isRequired,
-  notChosenRallies: PropTypes.array.isRequired
+  notChosenRallies: PropTypes.array.isRequired,
+  clearCacheOnLogout: PropTypes.func.isRequired
 };

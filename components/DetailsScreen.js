@@ -56,9 +56,6 @@ class DetailsScreen extends React.Component {
   }
 
   collectStamp(locationId) {
-    console.log(this.props.userId);
-    console.log(locationId);
-
     axios
       .patch(
         `https://cc4-flower-dev.herokuapp.com/location/${
