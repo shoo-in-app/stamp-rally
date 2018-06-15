@@ -30,7 +30,7 @@ export default class RallyDetails extends React.Component {
                   this.props.selectedLocation.visited ? "COLLECTED" : "COLLECT"
                 }
                 onPress={() =>
-                  this.props.sendPatch(this.props.selectedLocation.id)
+                  this.props.collectStamp(this.props.selectedLocation.id)
                 }
               />
             </View>
@@ -73,5 +73,5 @@ const styles = StyleSheet.create({
 RallyDetails.propTypes = {
   isWithinRange: PropTypes.bool,
   selectedLocation: PropTypes.object,
-  sendPatch: PropTypes.func
+  collectStamp: PropTypes.func
 };

@@ -52,12 +52,12 @@ class DetailsScreen extends React.Component {
     };
   }
 
-  sendPatch(id) {
+  collectStamp(locationId) {
     axios
       .patch(
         `https://cc4-flower-dev.herokuapp.com/location/${
           this.props.userID
-        }/${id}`,
+        }/${locationId}`,
         {
           visited: true
         }
@@ -65,7 +65,13 @@ class DetailsScreen extends React.Component {
       .then(() => {
         this.setState((oldState) => {
           const newState = { ...oldState };
-          newState.markers[id - 1].props.image = collectedStamp;
+
+          const collectedMarker = oldState.markers.find((marker) => 
+            marker.identifier === locationId
+          );
+          
+
+          newState.markers[locationId - 1].props.image = collectedStamp;
           return newState;
         });
       })
@@ -194,7 +200,7 @@ class DetailsScreen extends React.Component {
         <RallyDetails
           selectedLocation={this.state.selectedLocation}
           isWithinRange={this.state.isWithinRange}
-          sendPatch={this.sendPatch}
+          collectStamp={this.collectStamp}
         />
         {this.confirmView}
       </View>
