@@ -31,8 +31,8 @@ export default class LoginScreen extends React.Component {
           };
           Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
             .then((res) => {
-              this.props.navigation.navigate("Home");
               this.props.setUserID(res.data.userID);
+              this.props.navigation.navigate("Home");
             })
             .catch(() => {
               Alert.alert(
