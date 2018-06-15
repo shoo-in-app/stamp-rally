@@ -61,6 +61,12 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 15
+  },
+  placeholder: {
+    flex: 0,
+    height: 100,
+    fontSize: 20,
+    textAlign: "center"
   }
 });
 
