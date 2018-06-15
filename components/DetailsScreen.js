@@ -5,8 +5,8 @@ import { Button, Platform, StyleSheet, View, Alert } from "react-native";
 import { Constants, Location, Permissions } from "expo";
 import axios from "axios";
 
-import uncollectedStamp from "../assets/markers/stamp-uncollected.png";
-import collectedStamp from "../assets/markers/stamp-collected.png";
+import uncollectedStampImg from "../assets/markers/stamp-uncollected.png";
+import collectedStampImg from "../assets/markers/stamp-collected.png";
 
 import RallyDetails from "./RallyDetails";
 let timeoutID;
@@ -34,7 +34,7 @@ class DetailsScreen extends React.Component {
           }}
           title={location.title}
           description={location.description}
-          image={location.visited ? collectedStamp : uncollectedStamp}
+          image={location.visited ? collectedStampImg : uncollectedStampImg}
           onPress={() => {
             this.setState({
               selectedLocation: location,
@@ -56,6 +56,9 @@ class DetailsScreen extends React.Component {
   }
 
   collectStamp(locationId) {
+    console.log(this.props.userId);
+    console.log(locationId);
+
     axios
       .patch(
         `https://cc4-flower-dev.herokuapp.com/location/${
@@ -69,12 +72,12 @@ class DetailsScreen extends React.Component {
         this.setState((oldState) => {
           const newState = { ...oldState };
 
-          const collectedMarker = oldState.markers.find((marker) => 
-            marker.identifier === locationId
+          const collectedMarker = newState.markers.find(
+            (marker) => marker.identifier === locationId
           );
-          
 
-          newState.markers[locationId - 1].props.image = collectedStamp;
+          collectedMarker.props.image = collectedStampImg;
+
           return newState;
         });
       })
