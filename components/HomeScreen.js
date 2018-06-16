@@ -1,6 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Button, RefreshControl, SectionList } from "react-native";
+import {
+  StyleSheet,
+  Button,
+  RefreshControl,
+  SectionList,
+  Alert
+} from "react-native";
 import { Text, ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
@@ -9,6 +15,8 @@ export default class HomeScreen extends React.Component {
     this.state = {
       refreshing: false
     };
+
+    this.reloadData = this.reloadData.bind(this);
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -17,8 +25,8 @@ export default class HomeScreen extends React.Component {
       <Button
         title="Logout"
         onPress={() => {
-          params.setUserID(null);
           params.navigate("Login");
+          params.clearCacheOnLogout();
         }}
       />
     );
@@ -30,8 +38,12 @@ export default class HomeScreen extends React.Component {
   };
 
   componentDidMount() {
+    this.reloadData();
+  }
+
+  reloadData() {
     this.props.navigation.setParams({
-      setUserID: this.props.setUserID,
+      clearCacheOnLogout: this.props.clearCacheOnLogout,
       navigate: this.props.navigation.navigate.bind(this)
     });
     fetch(`https://cc4-flower-dev.herokuapp.com/rallies/${this.props.userID}`)
@@ -58,7 +70,8 @@ export default class HomeScreen extends React.Component {
           this.props.navigation.navigate("Details", {
             rallyID: data.item.id,
             title: data.item.title,
-            locations: data.item.locations
+            locations: data.item.locations,
+            reloadData: this.reloadData
           })
         }
         subtitle={data.item.description}
@@ -83,6 +96,14 @@ export default class HomeScreen extends React.Component {
       })
       .then(() => {
         this.setState({ refreshing: false });
+      })
+      .catch(() => {
+        Alert.alert(
+          "Connection error",
+          "There is a problem with the internet connection. Please try again later.",
+          [{ text: "OK", onPress: () => {} }]
+        );
+        this.setState({ refreshing: false });
       });
   }
 
@@ -106,7 +127,7 @@ export default class HomeScreen extends React.Component {
             onRefresh={this._onRefresh.bind(this)}
           />
         }
-        // keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={(data) => this.getRally(data)}
         sections={[
           {
@@ -114,7 +135,7 @@ export default class HomeScreen extends React.Component {
             data: this.props.chosenRallies
           },
           {
-            title: "Find Other Rallies",
+            title: "Other Rallies",
             data: this.props.notChosenRallies
           }
         ]}
@@ -140,5 +161,6 @@ HomeScreen.propTypes = {
   loadChosenRallies: PropTypes.func.isRequired,
   loadNotChosenRallies: PropTypes.func.isRequired,
   chosenRallies: PropTypes.array.isRequired,
-  notChosenRallies: PropTypes.array.isRequired
+  notChosenRallies: PropTypes.array.isRequired,
+  clearCacheOnLogout: PropTypes.func.isRequired
 };

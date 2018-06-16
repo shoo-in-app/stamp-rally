@@ -8,30 +8,29 @@ export default class RallyDetails extends React.Component {
   }
 
   render() {
-    if (this.props.selectedMarker) {
+    if (this.props.selectedLocation) {
       return (
         <View style={styles.container}>
-          <Text style={styles.title}>{this.props.selectedMarker.name}</Text>
+          <Text style={styles.title}>{this.props.selectedLocation.name}</Text>
           <View style={styles.inlineContainer}>
             <View style={styles.col1}>
               <Text style={styles.description}>
-                {this.props.selectedMarker.description}
+                {this.props.selectedLocation.description}
               </Text>
             </View>
             <View style={styles.col2}>
               <Button
-                key={this.props.selectedMarker.id.toString()}
+                key={this.props.selectedLocation.id.toString()}
                 disabled={
-                  this.props.selectedMarker.visited || this.props.disabled
+                  this.props.selectedLocation.visited ||
+                  !this.props.isWithinRange
                 }
                 style={styles.button}
                 title={
-                  this.props.selectedMarker.visited
-                    ? "ALREADY COLLECTED!!"
-                    : "COLLECT"
+                  this.props.selectedLocation.visited ? "COLLECTED" : "COLLECT"
                 }
                 onPress={() =>
-                  this.props.sendPatch(this.props.selectedMarker.id)
+                  this.props.collectStamp(this.props.selectedLocation.id)
                 }
               />
             </View>
@@ -62,11 +61,17 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 15
+  },
+  placeholder: {
+    flex: 0,
+    height: 100,
+    fontSize: 20,
+    textAlign: "center"
   }
 });
 
 RallyDetails.propTypes = {
-  disabled: PropTypes.bool,
-  selectedMarker: PropTypes.object,
-  sendPatch: PropTypes.func
+  isWithinRange: PropTypes.bool,
+  selectedLocation: PropTypes.object,
+  collectStamp: PropTypes.func
 };

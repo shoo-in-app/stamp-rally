@@ -1,6 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
 import { createStore } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
 import { reducer } from "./reducer";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -12,7 +13,7 @@ const persistConfig = {
   storage
 };
 const persistedReducer = persistReducer(persistConfig, reducer);
-const store = createStore(persistedReducer);
+const store = createStore(persistedReducer, composeWithDevTools());
 const persistor = persistStore(store);
 
 import HomeScreen from "./containers/HomeScreen";

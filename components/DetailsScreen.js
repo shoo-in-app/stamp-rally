@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { MapView } from "expo";
-import { Button, Platform, StyleSheet, View, Alert } from "react-native";
-import { Constants, Location, Permissions } from "expo";
+import { Button, StyleSheet, View, Alert } from "react-native";
+import { Location, Permissions } from "expo";
 import axios from "axios";
 
-import uncollectedStamp from "../assets/markers/stamp-uncollected.png";
-import collectedStamp from "../assets/markers/stamp-collected.png";
+import uncollectedStampImg from "../assets/markers/stamp-uncollected.png";
+import collectedStampImg from "../assets/markers/stamp-collected.png";
 
 import RallyDetails from "./RallyDetails";
 let timeoutID;
@@ -15,11 +15,13 @@ class DetailsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.mapRef = null;
+
     this.rallyID = this.props.navigation.getParam("rallyID", null);
     this.locations = this.props.navigation.getParam("locations", []);
-    this.notChosenRally = this.locations[0].visited === undefined;
+    this.reloadData = this.props.navigation.getParam("reloadData");
+
     this.markerIDs = [];
-    this.markers = this.locations.map((location, index) => {
+    this.markers = this.locations.map((location) => {
       this.markerIDs.push(location.id.toString());
       return (
         <MapView.Marker
@@ -31,63 +33,40 @@ class DetailsScreen extends React.Component {
           }}
           title={location.title}
           description={location.description}
-          image={location.visited ? collectedStamp : uncollectedStamp}
-          onPress={
-            /*eslint-disable */
-            location.visited
-              ? () => {
-                  this.setState((oldState) => {
-                    return {
-                      ...oldState,
-                      selectedMarker: this.locations[index]
-                    };
-                  });
-                }
-              : () => {
-                  this.setState((oldState) => {
-                    return {
-                      ...oldState,
-                      selectedMarker: this.locations[index]
-                    };
-                  });
-                  const markerInfo = this.locations[index];
-                  this.isCloseToMarker(markerInfo);
-                  // PATCH change to API
-                  // Update marker
-
-                  if (markerInfo.visited) return;
-                  // this.sendPatch(markerInfo.id);
-                }
-          }
-          /*eslint-enable */
+          image={location.visited ? collectedStampImg : uncollectedStampImg}
+          onPress={() => {
+            this.setState({
+              selectedLocation: location,
+              isWithinRange: this.isWithinRange(location)
+            });
+          }}
         />
       );
     });
+
     this.state = {
       markers: this.markers,
-      selectedMarker: null,
-      disabled: true
+      selectedLocation: null,
+      isWithinRange: true,
+      userLocation: null,
+      isRallyChosen: this.locations[0].visited !== undefined
     };
-    this.distance = this.distance.bind(this);
-    this.isCloseToMarker = this.isCloseToMarker.bind(this);
-    this.sendPatch = this.sendPatch.bind(this);
+
+    this.collectStamp = this.collectStamp.bind(this);
   }
-  sendPatch(id) {
+
+  collectStamp(locationId) {
     axios
       .patch(
         `https://cc4-flower-dev.herokuapp.com/location/${
           this.props.userID
-        }/${id}`,
+        }/${locationId}`,
         {
           visited: true
         }
       )
       .then(() => {
-        this.setState((oldState) => {
-          const newState = { ...oldState };
-          newState.markers[id - 1].props.pinColor = "green";
-          return newState;
-        });
+        this.reloadData();
       })
       .catch(() => {
         Alert.alert(
@@ -104,14 +83,7 @@ class DetailsScreen extends React.Component {
   };
 
   componentDidMount() {
-    if (Platform.OS === "android" && !Constants.isDevice) {
-      this.setState({
-        errorMessage:
-          "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"
-      });
-    } else {
-      this._getLocationAsync();
-    }
+    this._getLocationAsync();
     timeoutID = setTimeout(() => {
       this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
     }, 1);
@@ -124,25 +96,13 @@ class DetailsScreen extends React.Component {
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
-      this.setState({
-        errorMessage: "Permission to access location was denied"
-      });
+      Alert.alert(
+        "Error",
+        "You must grant location permission to this app in order to collect stamps.",
+        [{ text: "OK", onPress: () => {} }]
+      );
+      return;
     }
-
-    let location = await Location.getCurrentPositionAsync({});
-    const userLocation = (
-      <MapView.Marker
-        key={location.identifier}
-        identifier={location.identifier}
-        coordinate={location.coords}
-        title="Your location"
-        description="This is your current location"
-        pinColor="blue"
-      />
-    );
-    let markers = this.state.markers.slice();
-    markers.push(userLocation);
-    this.setState({ markers });
 
     await Location.watchPositionAsync(
       {
@@ -151,9 +111,9 @@ class DetailsScreen extends React.Component {
         timeInterval: 200
       },
       (location) => {
-        const updateLocation = (
+        const userLocation = (
           <MapView.Marker
-            key={location.identifier}
+            key={"userLocation"}
             identifier={location.identifier}
             coordinate={location.coords}
             title="Your location"
@@ -161,14 +121,12 @@ class DetailsScreen extends React.Component {
             pinColor="blue"
           />
         );
-        let markers = this.state.markers.slice();
-        markers.splice(-1, 1, updateLocation);
-        this.setState({ markers });
+        this.setState({ userLocation });
       }
     );
   };
 
-  distance(lat1, lon1, lat2, lon2) {
+  distanceToStamp(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
@@ -180,53 +138,24 @@ class DetailsScreen extends React.Component {
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in km
-    return d; //Distance in meter
+    return d * 1000; // Distance in m
   }
 
-  isCloseToMarker(markerInfo) {
-    if (this.notChosenRally) return;
+  isWithinRange(location) {
+    const COLLECTION_RANGE = 5000;
+
+    if (this.isRallyChosen) return;
     // user location marker
-    const userCoords = this.state.markers.slice(-1)[0].props.coordinate;
+    const userCoords = this.state.userLocation.props.coordinate;
     // the other location markers
-    const distance = this.distance(
-      markerInfo.lat,
-      markerInfo.lng,
+    const distanceToStamp = this.distanceToStamp(
+      location.lat,
+      location.lng,
       userCoords.latitude,
       userCoords.longitude
     );
-    if (distance < 5) {
-      if (this.state.selectedMarker === null) {
-        return this.setState({ disabled: true });
-      } else {
-        if (
-          this.state.selectedMarker &&
-          this.state.selectedMarker.id === markerInfo.id
-        ) {
-          return this.setState({ disabled: false });
-        }
-      }
-    }
-  }
 
-  get confirmView() {
-    if (this.notChosenRally)
-      return (
-        <View>
-          <Button
-            title="Choose this Rally"
-            onPress={() => {
-              axios.patch(
-                `https://cc4-flower-dev.herokuapp.com/rally/${
-                  this.props.userID
-                }/${this.rallyID}`,
-                {
-                  chosen: true
-                }
-              );
-            }}
-          />
-        </View>
-      );
+    return distanceToStamp < COLLECTION_RANGE;
   }
 
   render() {
@@ -239,13 +168,36 @@ class DetailsScreen extends React.Component {
           }}
         >
           {this.state.markers}
+          {this.state.userLocation}
         </MapView>
-        <RallyDetails
-          selectedMarker={this.state.selectedMarker}
-          disabled={this.state.disabled}
-          sendPatch={this.sendPatch}
-        />
-        {this.confirmView}
+        {this.state.isRallyChosen ? (
+          <RallyDetails
+            selectedLocation={this.state.selectedLocation}
+            isWithinRange={this.state.isWithinRange}
+            collectStamp={this.collectStamp}
+          />
+        ) : (
+          <View>
+            <Button
+              title="Choose this Rally"
+              onPress={() => {
+                axios
+                  .patch(
+                    `https://cc4-flower-dev.herokuapp.com/rally/${
+                      this.props.userID
+                    }/${this.rallyID}`,
+                    {
+                      chosen: true
+                    }
+                  )
+                  .then(() => {
+                    this.reloadData();
+                    this.setState({ isRallyChosen: true });
+                  });
+              }}
+            />
+          </View>
+        )}
       </View>
     );
   }

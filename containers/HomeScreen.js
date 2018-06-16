@@ -3,7 +3,8 @@ import HomeScreen from "../components/HomeScreen";
 import {
   loadChosenRallies,
   loadNotChosenRallies,
-  setUserID
+  setUserID,
+  clearCacheOnLogout
 } from "../reducer.js";
 
 const mapStateToProps = (state) => {
@@ -27,6 +28,9 @@ const mapDispatchToProps = (dispatch) => {
     setUserID: (userID) => {
       const action = setUserID(userID);
       dispatch(action);
+    },
+    clearCacheOnLogout: () => {
+      dispatch(clearCacheOnLogout());
     }
   };
 };
