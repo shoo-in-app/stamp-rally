@@ -158,31 +158,6 @@ class DetailsScreen extends React.Component {
     return distanceToStamp < COLLECTION_RANGE;
   }
 
-  get confirmView() {
-    return (
-      <View>
-        <Button
-          title="Choose this Rally"
-          onPress={() => {
-            axios
-              .patch(
-                `https://cc4-flower-dev.herokuapp.com/rally/${
-                  this.props.userID
-                }/${this.rallyID}`,
-                {
-                  chosen: true
-                }
-              )
-              .then(() => {
-                this.reloadData();
-                this.setState({ isRallyChosen: true });
-              });
-          }}
-        />
-      </View>
-    );
-  }
-
   render() {
     return (
       <View style={{ flex: 1, flexDirection: "column" }}>
@@ -195,12 +170,34 @@ class DetailsScreen extends React.Component {
           {this.state.markers}
           {this.state.userLocation}
         </MapView>
-        <RallyDetails
-          selectedLocation={this.state.selectedLocation}
-          isWithinRange={this.state.isWithinRange}
-          collectStamp={this.collectStamp}
-        />
-        {this.state.isRallyChosen ? "" : this.confirmView}
+        {this.state.isRallyChosen ? (
+          <RallyDetails
+            selectedLocation={this.state.selectedLocation}
+            isWithinRange={this.state.isWithinRange}
+            collectStamp={this.collectStamp}
+          />
+        ) : (
+          <View>
+            <Button
+              title="Choose this Rally"
+              onPress={() => {
+                axios
+                  .patch(
+                    `https://cc4-flower-dev.herokuapp.com/rally/${
+                      this.props.userID
+                    }/${this.rallyID}`,
+                    {
+                      chosen: true
+                    }
+                  )
+                  .then(() => {
+                    this.reloadData();
+                    this.setState({ isRallyChosen: true });
+                  });
+              }}
+            />
+          </View>
+        )}
       </View>
     );
   }
