@@ -18,8 +18,7 @@ class DetailsScreen extends React.Component {
 
     this.rallyID = this.props.navigation.getParam("rallyID", null);
     this.locations = this.props.navigation.getParam("locations", []);
-
-    this.isRallyChosen = this.locations[0].visited === undefined;
+    this.reloadData = this.props.navigation.getParam("reloadData");
 
     this.markerIDs = [];
     this.markers = this.locations.map((location) => {
@@ -49,7 +48,8 @@ class DetailsScreen extends React.Component {
       markers: this.markers,
       selectedLocation: null,
       isWithinRange: true,
-      userLocation: null
+      userLocation: null,
+      isRallyChosen: this.locations[0].visited !== undefined
     };
 
     this.collectStamp = this.collectStamp.bind(this);
@@ -66,7 +66,7 @@ class DetailsScreen extends React.Component {
         }
       )
       .then(() => {
-        
+        this.reloadData();
         // this.setState((oldState) => {
         //   const newState = { ...oldState };
 
@@ -168,24 +168,28 @@ class DetailsScreen extends React.Component {
   }
 
   get confirmView() {
-    if (this.isRallyChosen)
-      return (
-        <View>
-          <Button
-            title="Choose this Rally"
-            onPress={() => {
-              axios.patch(
+    return (
+      <View>
+        <Button
+          title="Choose this Rally"
+          onPress={() => {
+            axios
+              .patch(
                 `https://cc4-flower-dev.herokuapp.com/rally/${
                   this.props.userID
                 }/${this.rallyID}`,
                 {
                   chosen: true
                 }
-              );
-            }}
-          />
-        </View>
-      );
+              )
+              .then(() => {
+                this.reloadData();
+                this.setState({ isRallyChosen: true });
+              });
+          }}
+        />
+      </View>
+    );
   }
 
   render() {
@@ -205,7 +209,7 @@ class DetailsScreen extends React.Component {
           isWithinRange={this.state.isWithinRange}
           collectStamp={this.collectStamp}
         />
-        {this.confirmView}
+        {this.state.isRallyChosen ? "" : this.confirmView}
       </View>
     );
   }
