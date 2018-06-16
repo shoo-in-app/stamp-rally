@@ -67,15 +67,6 @@ class DetailsScreen extends React.Component {
       )
       .then(() => {
         this.reloadData();
-        // this.setState((oldState) => {
-        //   const newState = { ...oldState };
-
-        //   newState.markers.find(
-        //     (marker) => marker.key == locationId
-        //   ).props.image = collectedStampImg;
-
-        //   return newState;
-        // });
       })
       .catch(() => {
         Alert.alert(
