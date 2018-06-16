@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { MapView } from "expo";
-import { Button, Platform, StyleSheet, View, Alert } from "react-native";
-import { Constants, Location, Permissions } from "expo";
+import { Button, StyleSheet, View, Alert } from "react-native";
+import { Location, Permissions } from "expo";
 import axios from "axios";
 
 import uncollectedStampImg from "../assets/markers/stamp-uncollected.png";
