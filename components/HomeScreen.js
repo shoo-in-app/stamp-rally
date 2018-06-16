@@ -15,6 +15,8 @@ export default class HomeScreen extends React.Component {
     this.state = {
       refreshing: false
     };
+
+    this.reloadData = this.reloadData.bind(this);
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -36,7 +38,7 @@ export default class HomeScreen extends React.Component {
   };
 
   componentDidMount() {
-    reloadData();
+    this.reloadData();
   }
 
   reloadData() {
@@ -68,7 +70,8 @@ export default class HomeScreen extends React.Component {
           this.props.navigation.navigate("Details", {
             rallyID: data.item.id,
             title: data.item.title,
-            locations: data.item.locations
+            locations: data.item.locations,
+            reloadData: this.reloadData
           })
         }
         subtitle={data.item.description}
