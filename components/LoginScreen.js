@@ -27,7 +27,7 @@ export default class LoginScreen extends React.Component {
       .then((result) => {
         if (result.type === "success") {
           const body = {
-            email: result.user.email.split("@")[0]
+            email: result.user.email
           };
           Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
             .then((res) => {
