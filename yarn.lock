@@ -4476,6 +4476,13 @@ rimraf@~2.2.6:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
 
+rn-sliding-up-panel@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rn-sliding-up-panel/-/rn-sliding-up-panel-1.2.0.tgz#77e7ca5674db623333cfa7ef7b7767e77a400cdc"
+  dependencies:
+    clamp "^1.0.1"
+    prop-types "^15.6.0"
+
 rsvp@^3.3.3:
   version "3.6.2"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-3.6.2.tgz#2e96491599a96cde1b515d5674a8f7a91452926a"
