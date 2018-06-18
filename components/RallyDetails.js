@@ -138,7 +138,7 @@ export default class RallyDetails extends React.Component {
                 />
               </TouchableHighlight>
             ) : (
-              ""
+              <View />
             )}
           </View>
         </View>
