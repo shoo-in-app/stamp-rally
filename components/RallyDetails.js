@@ -20,6 +20,8 @@ const { height, width } = Dimensions.get("window");
 const MAX_PANEL = height - 120;
 const MIN_PANEL = 185;
 
+let slideDownTimeoutId;
+
 export default class RallyDetails extends React.Component {
   constructor(props) {
     super(props);
@@ -32,7 +34,8 @@ export default class RallyDetails extends React.Component {
       bigStampStyle: {
         height: 0,
         width: 0
-      }
+      },
+      isStampPadEnabled: false
     };
   }
 
@@ -43,6 +46,10 @@ export default class RallyDetails extends React.Component {
         bottom: MIN_PANEL
       }
     });
+  }
+
+  componentWillUnmount() {
+    clearTimeout(slideDownTimeoutId);
   }
 
   render() {
@@ -82,8 +89,8 @@ export default class RallyDetails extends React.Component {
                           : "COLLECT"
                       }
                       onPress={() => {
-                        // this.props.collectStamp(this.props.selectedLocation.id)
                         this._panel.transitionTo(MAX_PANEL);
+                        this.setState({ isStampPadEnabled: true });
                       }}
                     />
                   </View>
@@ -99,18 +106,23 @@ export default class RallyDetails extends React.Component {
             {this.props.selectedLocation ? (
               <TouchableHighlight
                 style={styles.stampPad}
-                onPress={(e) => {
+                onPress={(event) => {
+                  if (!this.state.isStampPadEnabled) return;
                   const SIZE = 200;
-                  console.log(e.nativeEvent);
                   this.setState({
                     bigStampStyle: {
                       height: SIZE,
                       width: SIZE,
-                      left: e.nativeEvent.locationX - SIZE / 2,
-                      top: e.nativeEvent.locationY - SIZE / 2,
+                      left: event.nativeEvent.locationX - SIZE / 2,
+                      top: event.nativeEvent.locationY - SIZE / 2,
                       zIndex: -50
-                    }
+                    },
+                    isStampPadEnabled: false
                   });
+                  this.props.collectStamp(this.props.selectedLocation.id);
+                  slideDownTimeoutId = setTimeout(() => {
+                    this._panel.transitionTo(MIN_PANEL);
+                  }, 2000);
                 }}
                 underlayColor={"white"}
               >
