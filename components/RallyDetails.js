@@ -1,10 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Button, StyleSheet, Text, View, Dimensions } from "react-native";
+import { Header } from "react-navigation";
 
 import SlidingUpPanel from "rn-sliding-up-panel";
 
 const { height } = Dimensions.get("window");
+
+const MAX_PANEL = height - 120;
+const MIN_PANEL = 185;
 
 export default class RallyDetails extends React.Component {
   constructor(props) {
@@ -12,8 +16,8 @@ export default class RallyDetails extends React.Component {
     this._panel = null;
     this.state = {
       draggableRange: {
-        top: 185,
-        bottom: 185
+        top: MIN_PANEL,
+        bottom: MIN_PANEL
       }
     };
   }
@@ -21,8 +25,8 @@ export default class RallyDetails extends React.Component {
   componentDidMount() {
     this.setState({
       draggableRange: {
-        top: height - 120,
-        bottom: 185
+        top: MAX_PANEL,
+        bottom: MIN_PANEL
       }
     });
   }
@@ -39,55 +43,54 @@ export default class RallyDetails extends React.Component {
       >
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
-            <Text>Bottom Sheet Peek!</Text>
+            {this.props.selectedLocation ? (
+              <View style={styles.stampInfo}>
+                <Text style={styles.title}>
+                  {this.props.selectedLocation.name}
+                </Text>
+                <View style={styles.inlineContainer}>
+                  <View style={styles.col1}>
+                    <Text style={styles.description}>
+                      {this.props.selectedLocation.description}
+                    </Text>
+                  </View>
+                  <View style={styles.col2}>
+                    <Button
+                      key={this.props.selectedLocation.id.toString()}
+                      disabled={
+                        this.props.selectedLocation.visited ||
+                        !this.props.isWithinRange
+                      }
+                      style={styles.button}
+                      title={
+                        this.props.selectedLocation.visited
+                          ? "COLLECTED"
+                          : "COLLECT"
+                      }
+                      onPress={() => {
+                        // this.props.collectStamp(this.props.selectedLocation.id)
+                        this._panel.transitionTo(MAX_PANEL);
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            ) : (
+              <Text style={styles.placeholder}>Select a location!</Text>
+            )}
           </View>
           <View style={styles.container}>
-            <Text>Bottom Sheet Content!</Text>
+            <Text>Stamps!</Text>
           </View>
         </View>
       </SlidingUpPanel>
     );
   }
-
-  // render() {
-  //   if (this.props.selectedLocation) {
-  //     return (
-  // <View style={styles.container}>
-  //   <Text style={styles.title}>{this.props.selectedLocation.name}</Text>
-  //   <View style={styles.inlineContainer}>
-  //     <View style={styles.col1}>
-  //       <Text style={styles.description}>
-  //         {this.props.selectedLocation.description}
-  //       </Text>
-  //     </View>
-  //     <View style={styles.col2}>
-  //       <Button
-  //         key={this.props.selectedLocation.id.toString()}
-  //         disabled={
-  //           this.props.selectedLocation.visited ||
-  //           !this.props.isWithinRange
-  //         }
-  //         style={styles.button}
-  //         title={
-  //           this.props.selectedLocation.visited ? "COLLECTED" : "COLLECT"
-  //         }
-  //         onPress={() =>
-  //           this.props.collectStamp(this.props.selectedLocation.id)
-  //         }
-  //       />
-  //     </View>
-  //   </View>
-  // </View>
-  //     );
-  //   } else {
-  //     return <Text style={styles.placeholder}>Select a location!</Text>;
-  //   }
-  // }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: height - Header.HEIGHT - 240,
     backgroundColor: "green",
     justifyContent: "center",
     alignItems: "center"
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
   },
   panelHeader: {
     height: 120,
-    backgroundColor: "blue",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center"
   },
@@ -120,6 +123,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     position: "relative"
+  },
+  stampInfo: {
+    flex: 0,
+    justifyContent: "flex-start",
+    alignItems: "flex-start"
   }
 });
 
