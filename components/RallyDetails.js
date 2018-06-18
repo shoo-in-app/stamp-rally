@@ -1,11 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, StyleSheet, Text, View, Dimensions } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TouchableHighlight,
+  Image
+} from "react-native";
 import { Header } from "react-navigation";
+
+import stampCollectedImgBig from "../assets/markers/stamp-collected-big.png";
 
 import SlidingUpPanel from "rn-sliding-up-panel";
 
-const { height } = Dimensions.get("window");
+const { height, width } = Dimensions.get("window");
 
 const MAX_PANEL = height - 120;
 const MIN_PANEL = 185;
@@ -18,6 +28,10 @@ export default class RallyDetails extends React.Component {
       draggableRange: {
         top: MIN_PANEL,
         bottom: MIN_PANEL
+      },
+      bigStampStyle: {
+        height: 0,
+        width: 0
       }
     };
   }
@@ -76,11 +90,38 @@ export default class RallyDetails extends React.Component {
                 </View>
               </View>
             ) : (
-              <Text style={styles.placeholder}>Select a location!</Text>
+              <View style={styles.placeholder}>
+                <Text style={styles.title}>Select a location!</Text>
+              </View>
             )}
           </View>
-          <View style={styles.container}>
-            <Text>Stamps!</Text>
+          <View style={styles.panelBody}>
+            {this.props.selectedLocation ? (
+              <TouchableHighlight
+                style={styles.stampPad}
+                onPress={(e) => {
+                  const SIZE = 200;
+                  console.log(e.nativeEvent);
+                  this.setState({
+                    bigStampStyle: {
+                      height: SIZE,
+                      width: SIZE,
+                      left: e.nativeEvent.locationX - SIZE / 2,
+                      top: e.nativeEvent.locationY - SIZE / 2,
+                      zIndex: -50
+                    }
+                  });
+                }}
+                underlayColor={"white"}
+              >
+                <Image
+                  source={stampCollectedImgBig}
+                  style={this.state.bigStampStyle}
+                />
+              </TouchableHighlight>
+            ) : (
+              ""
+            )}
           </View>
         </View>
       </SlidingUpPanel>
@@ -89,11 +130,10 @@ export default class RallyDetails extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  panelBody: {
     height: height - Header.HEIGHT - 240,
     backgroundColor: "green",
-    justifyContent: "center",
-    alignItems: "center"
+    zIndex: 20
   },
   inlineContainer: {
     flexDirection: "row"
@@ -108,16 +148,16 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
   placeholder: {
-    flex: 0,
-    height: 100,
-    fontSize: 20,
-    textAlign: "center"
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
   },
   panelHeader: {
     height: 120,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    zIndex: 200
   },
   panel: {
     flex: 1,
@@ -128,6 +168,16 @@ const styles = StyleSheet.create({
     flex: 0,
     justifyContent: "flex-start",
     alignItems: "flex-start"
+  },
+  stampPad: {
+    flex: 1,
+    width: width - 20,
+    margin: 10,
+    backgroundColor: "white",
+    zIndex: -20
+  },
+  title: {
+    fontSize: 20
   }
 });
 
