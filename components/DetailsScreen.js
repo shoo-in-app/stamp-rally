@@ -1,15 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { MapView } from "expo";
-import { Button, StyleSheet, View, Alert } from "react-native";
+import { Button, StyleSheet, View, Alert, Dimensions } from "react-native";
 import { Location, Permissions } from "expo";
 import axios from "axios";
+import { Header } from "react-navigation";
 
 import uncollectedStampImg from "../assets/markers/stamp-uncollected.png";
 import collectedStampImg from "../assets/markers/stamp-collected.png";
 
 import RallyDetails from "./RallyDetails";
 let timeoutID;
+
+const { height } = Dimensions.get("window");
 
 class DetailsScreen extends React.Component {
   constructor(props) {
@@ -204,7 +207,7 @@ class DetailsScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  map: { flex: 1 },
+  map: { height: height - Header.HEIGHT - 120 },
   details: {
     flex: 0,
     flexBasis: 100,
