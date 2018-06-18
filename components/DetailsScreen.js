@@ -1,15 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { MapView } from "expo";
-import { Button, StyleSheet, View, Alert } from "react-native";
+import { Button, StyleSheet, View, Alert, Dimensions } from "react-native";
 import { Location, Permissions } from "expo";
 import axios from "axios";
+import { Header } from "react-navigation";
 
 import uncollectedStampImg from "../assets/markers/stamp-uncollected.png";
 import collectedStampImg from "../assets/markers/stamp-collected.png";
 
 import RallyDetails from "./RallyDetails";
 let timeoutID;
+
+const { height } = Dimensions.get("window");
 
 class DetailsScreen extends React.Component {
   constructor(props) {
@@ -21,7 +24,7 @@ class DetailsScreen extends React.Component {
     this.reloadData = this.props.navigation.getParam("reloadData");
 
     this.markerIDs = [];
-    this.markers = this.locations.map((location) => {
+    this.markers = this.locations.map((location, index) => {
       this.markerIDs.push(location.id.toString());
       return (
         <MapView.Marker
@@ -37,7 +40,8 @@ class DetailsScreen extends React.Component {
           onPress={() => {
             this.setState({
               selectedLocation: location,
-              isWithinRange: this.isWithinRange(location)
+              isWithinRange: this.isWithinRange(location),
+              selectedLocationIndex: index
             });
           }}
         />
@@ -47,6 +51,7 @@ class DetailsScreen extends React.Component {
     this.state = {
       markers: this.markers,
       selectedLocation: null,
+      selectedLocationIndex: -1,
       isWithinRange: true,
       userLocation: null,
       isRallyChosen: this.locations[0].visited !== undefined
@@ -58,7 +63,7 @@ class DetailsScreen extends React.Component {
   collectStamp(locationId) {
     axios
       .patch(
-        `https://cc4-flower-dev.herokuapp.com/location/${
+        `https://cc4-flower.herokuapp.com/mobile-api/location/${
           this.props.userID
         }/${locationId}`,
         {
@@ -67,6 +72,42 @@ class DetailsScreen extends React.Component {
       )
       .then(() => {
         this.reloadData();
+        this.setState((oldState) => {
+          const thisLocation = this.state.selectedLocation;
+
+          const newMarker = (
+            <MapView.Marker
+              identifier={this.state.selectedLocation.id.toString()}
+              key={this.state.selectedLocation.id.toString()}
+              coordinate={{
+                latitude: this.state.selectedLocation.lat,
+                longitude: this.state.selectedLocation.lng
+              }}
+              title={this.state.selectedLocation.title}
+              description={this.state.selectedLocation.description}
+              image={collectedStampImg}
+              onPress={() => {
+                this.setState({
+                  selectedLocation: thisLocation
+                });
+              }}
+            />
+          );
+          const newState = {
+            ...oldState,
+            markers: [
+              ...oldState.markers.slice(0, oldState.selectedLocationIndex),
+              newMarker,
+              ...oldState.markers.slice(oldState.selectedLocationIndex + 1)
+            ],
+            selectedLocation: {
+              ...oldState.selectedLocation,
+              visited: true
+            }
+          };
+
+          return newState;
+        });
       })
       .catch(() => {
         Alert.alert(
@@ -183,7 +224,7 @@ class DetailsScreen extends React.Component {
               onPress={() => {
                 axios
                   .patch(
-                    `https://cc4-flower-dev.herokuapp.com/rally/${
+                    `https://cc4-flower.herokuapp.com/mobile-api/rally/${
                       this.props.userID
                     }/${this.rallyID}`,
                     {
@@ -204,7 +245,7 @@ class DetailsScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  map: { flex: 1 },
+  map: { height: height - Header.HEIGHT - 120 },
   details: {
     flex: 0,
     flexBasis: 100,

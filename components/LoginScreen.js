@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { StyleSheet, Text, View, Button, Alert } from "react-native";
 import Expo from "expo";
-import Axios from "axios";
+import axios from "axios";
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -29,9 +29,10 @@ export default class LoginScreen extends React.Component {
           const body = {
             email: result.user.email
           };
-          Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
+          axios
+            .post("https://cc4-flower.herokuapp.com/mobile-api/user", body)
             .then((res) => {
-              this.props.setUserID(res.data.userID);
+              this.props.setUserID(res.data.userId);
               this.props.navigation.navigate("Home");
             })
             .catch(() => {
