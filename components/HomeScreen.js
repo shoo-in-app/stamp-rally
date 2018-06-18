@@ -63,6 +63,14 @@ export default class HomeScreen extends React.Component {
     const total = data.item.locations.length;
     const progress = data.item.locations.filter((location) => location.visited)
       .length;
+    let backgroundColor;
+    if (total === progress) {
+      backgroundColor = "dodgerblue";
+    } else if (progress > 0) {
+      backgroundColor = "green";
+    } else {
+      backgroundColor = "gray";
+    }
     return (
       <ListItem
         key={data.item.id}
@@ -81,7 +89,7 @@ export default class HomeScreen extends React.Component {
           value: `${progress}/${total}`,
           containerStyle: {
             marginTop: 0,
-            backgroundColor: total === progress ? "dodgerblue" : "gray"
+            backgroundColor
           }
         }}
       />
@@ -136,28 +144,21 @@ export default class HomeScreen extends React.Component {
         sections={[
           {
             title: "Your Rallies",
-            data: this.props.chosenRallies
+            data: this.props.chosenRallies.filter((rally) => !rally.completed)
           },
           {
             title: "Other Rallies",
             data: this.props.notChosenRallies
+          },
+          {
+            title: "Completed Rallies",
+            data: this.props.chosenRallies.filter((rally) => rally.completed)
           }
         ]}
       />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44
-  }
-});
 
 HomeScreen.propTypes = {
   userID: PropTypes.string.isRequired,
