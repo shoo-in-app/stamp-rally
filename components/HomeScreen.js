@@ -46,7 +46,9 @@ export default class HomeScreen extends React.Component {
       clearCacheOnLogout: this.props.clearCacheOnLogout,
       navigate: this.props.navigation.navigate.bind(this)
     });
-    fetch(`https://cc4-flower-dev.herokuapp.com/rallies/${this.props.userID}`)
+    fetch(
+      `https://cc4-flower.herokuapp.com/mobile-api/rallies/${this.props.userID}`
+    )
       .then((response) => response.json())
       .then((data) => {
         this.props.loadChosenRallies(data.chosen);
@@ -88,7 +90,9 @@ export default class HomeScreen extends React.Component {
 
   _onRefresh() {
     this.setState({ refreshing: true });
-    fetch(`https://cc4-flower-dev.herokuapp.com/rallies/${this.props.userID}`)
+    fetch(
+      `https://cc4-flower.herokuapp.com/mobile-api/rallies/${this.props.userID}`
+    )
       .then((response) => response.json())
       .then((data) => {
         this.props.loadChosenRallies(data.chosen);

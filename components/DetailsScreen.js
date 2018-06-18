@@ -24,7 +24,7 @@ class DetailsScreen extends React.Component {
     this.reloadData = this.props.navigation.getParam("reloadData");
 
     this.markerIDs = [];
-    this.markers = this.locations.map((location) => {
+    this.markers = this.locations.map((location, index) => {
       this.markerIDs.push(location.id.toString());
       return (
         <MapView.Marker
@@ -40,7 +40,8 @@ class DetailsScreen extends React.Component {
           onPress={() => {
             this.setState({
               selectedLocation: location,
-              isWithinRange: this.isWithinRange(location)
+              isWithinRange: this.isWithinRange(location),
+              selectedLocationIndex: index
             });
           }}
         />
@@ -50,6 +51,7 @@ class DetailsScreen extends React.Component {
     this.state = {
       markers: this.markers,
       selectedLocation: null,
+      selectedLocationIndex: -1,
       isWithinRange: true,
       userLocation: null,
       isRallyChosen: this.locations[0].visited !== undefined
@@ -61,7 +63,7 @@ class DetailsScreen extends React.Component {
   collectStamp(locationId) {
     axios
       .patch(
-        `https://cc4-flower-dev.herokuapp.com/location/${
+        `https://cc4-flower.herokuapp.com/mobile-api/location/${
           this.props.userID
         }/${locationId}`,
         {
@@ -70,6 +72,42 @@ class DetailsScreen extends React.Component {
       )
       .then(() => {
         this.reloadData();
+        this.setState((oldState) => {
+          const thisLocation = this.state.selectedLocation;
+
+          const newMarker = (
+            <MapView.Marker
+              identifier={this.state.selectedLocation.id.toString()}
+              key={this.state.selectedLocation.id.toString()}
+              coordinate={{
+                latitude: this.state.selectedLocation.lat,
+                longitude: this.state.selectedLocation.lng
+              }}
+              title={this.state.selectedLocation.title}
+              description={this.state.selectedLocation.description}
+              image={collectedStampImg}
+              onPress={() => {
+                this.setState({
+                  selectedLocation: thisLocation
+                });
+              }}
+            />
+          );
+          const newState = {
+            ...oldState,
+            markers: [
+              ...oldState.markers.slice(0, oldState.selectedLocationIndex),
+              newMarker,
+              ...oldState.markers.slice(oldState.selectedLocationIndex + 1)
+            ],
+            selectedLocation: {
+              ...oldState.selectedLocation,
+              visited: true
+            }
+          };
+
+          return newState;
+        });
       })
       .catch(() => {
         Alert.alert(
@@ -186,7 +224,7 @@ class DetailsScreen extends React.Component {
               onPress={() => {
                 axios
                   .patch(
-                    `https://cc4-flower-dev.herokuapp.com/rally/${
+                    `https://cc4-flower.herokuapp.com/mobile-api/rally/${
                       this.props.userID
                     }/${this.rallyID}`,
                     {

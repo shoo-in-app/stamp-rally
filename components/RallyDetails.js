@@ -60,7 +60,7 @@ export default class RallyDetails extends React.Component {
         allowDragging={false}
         draggableRange={this.state.draggableRange}
         startCollapsed={true}
-        ref={(c) => (this._panel = c)}
+        ref={(panel) => (this._panel = panel)}
       >
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
@@ -122,6 +122,12 @@ export default class RallyDetails extends React.Component {
                   this.props.collectStamp(this.props.selectedLocation.id);
                   slideDownTimeoutId = setTimeout(() => {
                     this._panel.transitionTo(MIN_PANEL);
+                    this.setState({
+                      bigStampStyle: {
+                        height: 0,
+                        width: 0
+                      }
+                    });
                   }, 2000);
                 }}
                 underlayColor={"white"}
