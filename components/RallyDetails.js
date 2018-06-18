@@ -9,10 +9,6 @@ const { height } = Dimensions.get("window");
 export default class RallyDetails extends React.Component {
   constructor(props) {
     super(props);
-    this.draggableRange = {
-      top: height - 120,
-      bottom: 185
-    };
     this._panel = null;
     this.state = {
       draggableRange: {
