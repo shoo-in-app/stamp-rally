@@ -59,7 +59,6 @@ export default class RallyDetails extends React.Component {
         showBackdrop={false}
         allowDragging={false}
         draggableRange={this.state.draggableRange}
-        startCollapsed={true}
         ref={(panel) => (this._panel = panel)}
       >
         <View style={styles.panel}>
@@ -82,7 +81,10 @@ export default class RallyDetails extends React.Component {
                         this.props.selectedLocation.visited ||
                         !this.props.isWithinRange
                       }
-                      style={styles.button}
+                      color="#A61414"
+                      textStyle={{
+                        fontFamily: "edo"
+                      }}
                       title={
                         this.props.selectedLocation.visited
                           ? "COLLECTED"
@@ -159,6 +161,9 @@ const styles = StyleSheet.create({
   col1: {
     flex: 0.6
   },
+  description: {
+    margin: 5
+  },
   col2: {
     flex: 0.4
   },
@@ -183,9 +188,10 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   stampInfo: {
-    flex: 0,
-    justifyContent: "flex-start",
-    alignItems: "flex-start"
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    margin: 5
   },
   stampPad: {
     flex: 1,
@@ -195,7 +201,10 @@ const styles = StyleSheet.create({
     zIndex: -20
   },
   title: {
-    fontSize: 20
+    flex: 1,
+    fontSize: 20,
+    fontWeight: "bold",
+    margin: 5
   }
 });
 
