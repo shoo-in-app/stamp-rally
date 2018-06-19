@@ -119,7 +119,11 @@ class DetailsScreen extends React.Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam("title", "Rally Details")
+      title: navigation.getParam("title", "Rally Details"),
+      headerTitleStyle: {
+        fontFamily: "edo",
+        fontSize: 18
+      }
     };
   };
 
