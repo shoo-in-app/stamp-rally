@@ -118,18 +118,24 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <SectionList
-        renderSectionHeader={({ section: { title } }) => (
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 20,
-              color: "#fff",
-              backgroundColor: "#A61414"
-            }}
-          >
-            {title}
-          </Text>
-        )}
+        renderSectionHeader={({ section: { title, data } }) => {
+          if (data.length > 0) {
+            return (
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: "#fff",
+                  backgroundColor: "#A61414"
+                }}
+              >
+                {title}
+              </Text>
+            );
+          } else {
+            return <Text style={{ height: 0 }} />;
+          }
+        }}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
@@ -144,7 +150,7 @@ export default class HomeScreen extends React.Component {
             data: this.props.chosenRallies.filter((rally) => !rally.completed)
           },
           {
-            title: "Other Rallies",
+            title: "Available Rallies",
             data: this.props.notChosenRallies
           },
           {
