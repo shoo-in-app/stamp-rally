@@ -131,7 +131,7 @@ class DetailsScreen extends React.Component {
     this._getLocationAsync();
     timeoutID = setTimeout(() => {
       this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
-    }, 1);
+    }, 50);
   }
 
   componentWillUnmount() {
@@ -222,9 +222,10 @@ class DetailsScreen extends React.Component {
             collectStamp={this.collectStamp}
           />
         ) : (
-          <View>
+          <View style={styles.chooseContainer}>
             <Button
               title="Choose this Rally"
+              color="#A61414"
               onPress={() => {
                 axios
                   .patch(
@@ -250,10 +251,11 @@ class DetailsScreen extends React.Component {
 
 const styles = StyleSheet.create({
   map: { height: height - Header.HEIGHT - 120 },
-  details: {
-    flex: 0,
-    flexBasis: 100,
-    height: 100
+  chooseContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white"
   }
 });
 
