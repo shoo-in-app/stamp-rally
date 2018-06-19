@@ -1,5 +1,10 @@
 import React from "react";
+import { View } from "react-native";
 import { createStackNavigator } from "react-navigation";
+import { Font } from "expo";
+
+import edo from "./assets/fonts/edo.ttf";
+
 import { createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { reducer } from "./reducer";
@@ -27,16 +32,41 @@ const RootStack = createStackNavigator(
     Details: DetailsScreen
   },
   {
-    initialRouteName: "Login"
+    initialRouteName: "Login",
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: "#A61414"
+      },
+      headerTintColor: "white",
+      headerTitleStyle: {
+        fontFamily: "edo",
+        fontSize: 22
+      }
+    }
   }
 );
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      fontLoaded: false
+    };
+  }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      edo
+    });
+    this.setState({ fontLoaded: true });
+  }
+
   render() {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <RootStack />
+          {this.state.fontLoaded ? <RootStack /> : <View />}
         </PersistGate>
       </Provider>
     );
