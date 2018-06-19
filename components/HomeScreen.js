@@ -28,6 +28,7 @@ export default class HomeScreen extends React.Component {
           params.navigate("Login");
           params.clearCacheOnLogout();
         }}
+        color="#fff"
       />
     );
     return {
