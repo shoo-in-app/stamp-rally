@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, StatusBar } from "react-native";
 import { createStackNavigator } from "react-navigation";
 import { Font } from "expo";
 
@@ -66,6 +66,7 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
+          <StatusBar barStyle="light-content" />
           {this.state.fontLoaded ? <RootStack /> : <View />}
         </PersistGate>
       </Provider>
