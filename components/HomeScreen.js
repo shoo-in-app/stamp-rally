@@ -1,12 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  StyleSheet,
-  Button,
-  RefreshControl,
-  SectionList,
-  Alert
-} from "react-native";
+import { Button, RefreshControl, SectionList, Alert } from "react-native";
 import { Text, ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
@@ -93,6 +87,7 @@ export default class HomeScreen extends React.Component {
             backgroundColor
           }
         }}
+        containerStyle={{ backgroundColor: "white" }}
       />
     );
   }
@@ -128,7 +123,8 @@ export default class HomeScreen extends React.Component {
             style={{
               fontWeight: "bold",
               fontSize: 20,
-              backgroundColor: "white"
+              color: "#fff",
+              backgroundColor: "#A61414"
             }}
           >
             {title}
@@ -156,6 +152,7 @@ export default class HomeScreen extends React.Component {
             data: this.props.chosenRallies.filter((rally) => rally.completed)
           }
         ]}
+        style={{ backgroundColor: "white" }}
       />
     );
   }
