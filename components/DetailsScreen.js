@@ -54,7 +54,8 @@ class DetailsScreen extends React.Component {
       selectedLocationIndex: -1,
       isWithinRange: true,
       userLocation: null,
-      isRallyChosen: this.locations[0].visited !== undefined
+      isRallyChosen: this.locations[0].visited !== undefined,
+      distanceToSelectedLocation: null
     };
 
     this.collectStamp = this.collectStamp.bind(this);
@@ -200,6 +201,8 @@ class DetailsScreen extends React.Component {
       userCoords.longitude
     );
 
+    this.setState({ distanceToSelectedLocation: distanceToStamp });
+
     return distanceToStamp < COLLECTION_RANGE;
   }
 
@@ -220,6 +223,7 @@ class DetailsScreen extends React.Component {
             selectedLocation={this.state.selectedLocation}
             isWithinRange={this.state.isWithinRange}
             collectStamp={this.collectStamp}
+            distanceToStamp={this.state.distanceToSelectedLocation}
           />
         ) : (
           <View style={styles.chooseContainer}>

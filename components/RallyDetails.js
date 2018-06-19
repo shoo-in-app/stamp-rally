@@ -65,37 +65,41 @@ export default class RallyDetails extends React.Component {
           <View style={styles.panelHeader}>
             {this.props.selectedLocation ? (
               <View style={styles.stampInfo}>
-                <Text style={styles.title}>
-                  {this.props.selectedLocation.name}
-                </Text>
+                <View style={styles.titleInfo}>
+                  <Text style={styles.title}>
+                    {this.props.selectedLocation.name}
+                  </Text>
+                  <Text style={styles.description}>
+                    {this.props.selectedLocation.description}
+                  </Text>
+                  <Text style={styles.description}>
+                    {this.props.distanceToStamp > 1000
+                      ? this.props.distanceToStamp.toFixed(1) + " km "
+                      : this.props.distanceToStamp.toFixed(0) + " m "}
+                    away.
+                  </Text>
+                </View>
                 <View style={styles.inlineContainer}>
-                  <View style={styles.col1}>
-                    <Text style={styles.description}>
-                      {this.props.selectedLocation.description}
-                    </Text>
-                  </View>
-                  <View style={styles.col2}>
-                    <Button
-                      key={this.props.selectedLocation.id.toString()}
-                      disabled={
-                        this.props.selectedLocation.visited ||
-                        !this.props.isWithinRange
-                      }
-                      color="#A61414"
-                      textStyle={{
-                        fontFamily: "edo"
-                      }}
-                      title={
-                        this.props.selectedLocation.visited
-                          ? "COLLECTED"
-                          : "COLLECT"
-                      }
-                      onPress={() => {
-                        this._panel.transitionTo(MAX_PANEL);
-                        this.setState({ isStampPadEnabled: true });
-                      }}
-                    />
-                  </View>
+                  <Button
+                    key={this.props.selectedLocation.id.toString()}
+                    disabled={
+                      this.props.selectedLocation.visited ||
+                      !this.props.isWithinRange
+                    }
+                    color="#A61414"
+                    textStyle={{
+                      fontFamily: "edo"
+                    }}
+                    title={
+                      this.props.selectedLocation.visited
+                        ? "COLLECTED!"
+                        : "COLLECT"
+                    }
+                    onPress={() => {
+                      this._panel.transitionTo(MAX_PANEL);
+                      this.setState({ isStampPadEnabled: true });
+                    }}
+                  />
                 </View>
               </View>
             ) : (
@@ -152,7 +156,7 @@ export default class RallyDetails extends React.Component {
 const styles = StyleSheet.create({
   panelBody: {
     height: height - Header.HEIGHT - 240,
-    backgroundColor: "green",
+    backgroundColor: "#A61414",
     zIndex: 20
   },
   inlineContainer: {
@@ -161,14 +165,13 @@ const styles = StyleSheet.create({
   col1: {
     flex: 0.6
   },
-  description: {
-    margin: 5
-  },
   col2: {
     flex: 0.4
   },
   description: {
-    fontSize: 15
+    flex: 1,
+    fontSize: 15,
+    margin: 5
   },
   placeholder: {
     flex: 1,
@@ -189,7 +192,7 @@ const styles = StyleSheet.create({
   },
   stampInfo: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "flex-start",
     margin: 5
   },
@@ -205,11 +208,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     margin: 5
+  },
+  titleInfo: {
+    flex: 1,
+    flexDirection: "column"
   }
 });
 
 RallyDetails.propTypes = {
   isWithinRange: PropTypes.bool,
   selectedLocation: PropTypes.object,
-  collectStamp: PropTypes.func
+  collectStamp: PropTypes.func,
+  distanceToStamp: PropTypes.number
 };
