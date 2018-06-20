@@ -1,6 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, RefreshControl, SectionList, Alert } from "react-native";
+import {
+  Button,
+  RefreshControl,
+  SectionList,
+  Alert,
+  Platform
+} from "react-native";
 import { Text, ListItem } from "react-native-elements";
 
 export default class HomeScreen extends React.Component {
@@ -22,7 +28,7 @@ export default class HomeScreen extends React.Component {
           params.navigate("Login");
           params.clearCacheOnLogout();
         }}
-        color="#fff"
+        color={Platform.OS === "ios" ? "#fff" : "#D41919"}
       />
     );
     return {
