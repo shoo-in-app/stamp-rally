@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
     zIndex: -20
   },
   title: {
-    flex: 1,
     fontSize: 20,
     fontWeight: "bold",
     margin: 5
