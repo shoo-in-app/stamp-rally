@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { Header } from "react-navigation";
 
+import LocationDetails from "./LocationDetails";
+
 import stampCollectedImgBig from "../assets/markers/stamp-collected-big.png";
 
 import SlidingUpPanel from "rn-sliding-up-panel";
@@ -37,6 +39,8 @@ export default class RallyDetails extends React.Component {
       },
       isStampPadEnabled: false
     };
+
+    this.maximiseStampPad = this.maximiseStampPad.bind(this);
   }
 
   componentDidMount() {
@@ -52,6 +56,11 @@ export default class RallyDetails extends React.Component {
     clearTimeout(slideDownTimeoutId);
   }
 
+  maximiseStampPad() {
+    this._panel.transitionTo(MAX_PANEL);
+    this.setState({ isStampPadEnabled: true });
+  }
+
   render() {
     return (
       <SlidingUpPanel
@@ -64,44 +73,12 @@ export default class RallyDetails extends React.Component {
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
             {this.props.selectedLocation ? (
-              <View style={styles.stampInfo}>
-                <View style={styles.titleInfo}>
-                  <Text style={styles.title}>
-                    {this.props.selectedLocation.name}
-                  </Text>
-                  <Text style={styles.description}>
-                    {this.props.selectedLocation.description}
-                  </Text>
-                  <Text style={styles.description}>
-                    {this.props.distanceToStamp > 1000
-                      ? this.props.distanceToStamp.toFixed(1) + " km "
-                      : this.props.distanceToStamp.toFixed(0) + " m "}
-                    away.
-                  </Text>
-                </View>
-                <View style={styles.inlineContainer}>
-                  <Button
-                    key={this.props.selectedLocation.id.toString()}
-                    disabled={
-                      this.props.selectedLocation.visited ||
-                      !this.props.isWithinRange
-                    }
-                    color="#A61414"
-                    textStyle={{
-                      fontFamily: "edo"
-                    }}
-                    title={
-                      this.props.selectedLocation.visited
-                        ? "COLLECTED!"
-                        : "COLLECT"
-                    }
-                    onPress={() => {
-                      this._panel.transitionTo(MAX_PANEL);
-                      this.setState({ isStampPadEnabled: true });
-                    }}
-                  />
-                </View>
-              </View>
+              <LocationDetails
+                isWithinRange={this.props.isWithinRange}
+                selectedLocation={this.props.selectedLocation}
+                maximiseStampPad={this.maximiseStampPad}
+                distanceToStamp={this.props.distanceToStamp}
+              />
             ) : (
               <View style={styles.placeholder}>
                 <Text style={styles.title}>Select a location!</Text>
@@ -159,20 +136,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#A61414",
     zIndex: 20
   },
-  inlineContainer: {
-    flexDirection: "row"
-  },
-  col1: {
-    flex: 0.6
-  },
-  col2: {
-    flex: 0.4
-  },
-  description: {
-    flex: 1,
-    fontSize: 15,
-    margin: 5
-  },
   placeholder: {
     flex: 1,
     alignItems: "center",
@@ -190,27 +153,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     position: "relative"
   },
-  stampInfo: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    margin: 5
-  },
   stampPad: {
     flex: 1,
     width: width - 20,
     margin: 10,
     backgroundColor: "white",
     zIndex: -20
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    margin: 5
-  },
-  titleInfo: {
-    flex: 1,
-    flexDirection: "column"
   }
 });
 
