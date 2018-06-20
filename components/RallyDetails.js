@@ -144,8 +144,6 @@ const styles = StyleSheet.create({
   panelHeader: {
     height: 120,
     backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
     zIndex: 200
   },
   panel: {
@@ -159,6 +157,11 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: "white",
     zIndex: -20
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    margin: 5
   }
 });
 

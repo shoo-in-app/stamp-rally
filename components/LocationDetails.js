@@ -18,7 +18,7 @@ export default class LocationDetails extends React.Component {
             away.
           </Text>
         </View>
-        <View style={styles.inlineContainer}>
+        <View style={styles.buttonContainer}>
           <Button
             key={this.props.selectedLocation.id.toString()}
             disabled={
@@ -40,18 +40,26 @@ export default class LocationDetails extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  inlineContainer: {
-    flexDirection: "row"
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "center"
   },
   description: {
-    flex: 1,
     fontSize: 15,
     margin: 5
+  },
+  stampDescription: {
+    justifyContent: "space-around"
+  },
+  stampDetails: {
+    justifyContent: "flex-start"
   },
   stampInfo: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
+    justifyContent: "space-between",
     margin: 5
   },
   title: {
@@ -60,8 +68,8 @@ const styles = StyleSheet.create({
     margin: 5
   },
   titleInfo: {
-    flex: 1,
-    flexDirection: "column"
+    flexDirection: "column",
+    justifyContent: "space-around"
   }
 });
 
