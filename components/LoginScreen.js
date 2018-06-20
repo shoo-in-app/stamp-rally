@@ -1,8 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Text, View, Button, Alert } from "react-native";
+import { StyleSheet, Text, View, Button, Alert, Image } from "react-native";
 import Expo from "expo";
 import axios from "axios";
+
+import logo from "../assets/icon.png";
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -55,8 +57,13 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>{this.state.cancelled ? "Login failed" : "Please Login!"}</Text>
-        <Button title="Login with Google" onPress={() => this.login()} />
+        <Image source={logo} style={styles.logo} />
+        <Text>{this.state.cancelled ? "Login failed." : ""}</Text>
+        <Button
+          title="Login with Google"
+          color="#A61414"
+          onPress={() => this.login()}
+        />
       </View>
     );
   }
@@ -68,6 +75,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  logo: {
+    height: 200,
+    width: 200,
+    margin: 20
   }
 });
 

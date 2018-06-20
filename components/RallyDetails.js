@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { Header } from "react-navigation";
 
+import LocationDetails from "./LocationDetails";
+
 import stampCollectedImgBig from "../assets/markers/stamp-collected-big.png";
 
 import SlidingUpPanel from "rn-sliding-up-panel";
@@ -37,6 +39,8 @@ export default class RallyDetails extends React.Component {
       },
       isStampPadEnabled: false
     };
+
+    this.maximiseStampPad = this.maximiseStampPad.bind(this);
   }
 
   componentDidMount() {
@@ -52,6 +56,11 @@ export default class RallyDetails extends React.Component {
     clearTimeout(slideDownTimeoutId);
   }
 
+  maximiseStampPad() {
+    this._panel.transitionTo(MAX_PANEL);
+    this.setState({ isStampPadEnabled: true });
+  }
+
   render() {
     return (
       <SlidingUpPanel
@@ -59,43 +68,17 @@ export default class RallyDetails extends React.Component {
         showBackdrop={false}
         allowDragging={false}
         draggableRange={this.state.draggableRange}
-        startCollapsed={true}
         ref={(panel) => (this._panel = panel)}
       >
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
             {this.props.selectedLocation ? (
-              <View style={styles.stampInfo}>
-                <Text style={styles.title}>
-                  {this.props.selectedLocation.name}
-                </Text>
-                <View style={styles.inlineContainer}>
-                  <View style={styles.col1}>
-                    <Text style={styles.description}>
-                      {this.props.selectedLocation.description}
-                    </Text>
-                  </View>
-                  <View style={styles.col2}>
-                    <Button
-                      key={this.props.selectedLocation.id.toString()}
-                      disabled={
-                        this.props.selectedLocation.visited ||
-                        !this.props.isWithinRange
-                      }
-                      style={styles.button}
-                      title={
-                        this.props.selectedLocation.visited
-                          ? "COLLECTED"
-                          : "COLLECT"
-                      }
-                      onPress={() => {
-                        this._panel.transitionTo(MAX_PANEL);
-                        this.setState({ isStampPadEnabled: true });
-                      }}
-                    />
-                  </View>
-                </View>
-              </View>
+              <LocationDetails
+                isWithinRange={this.props.isWithinRange}
+                selectedLocation={this.props.selectedLocation}
+                maximiseStampPad={this.maximiseStampPad}
+                distanceToStamp={this.props.distanceToStamp}
+              />
             ) : (
               <View style={styles.placeholder}>
                 <Text style={styles.title}>Select a location!</Text>
@@ -150,20 +133,8 @@ export default class RallyDetails extends React.Component {
 const styles = StyleSheet.create({
   panelBody: {
     height: height - Header.HEIGHT - 240,
-    backgroundColor: "green",
+    backgroundColor: "#A61414",
     zIndex: 20
-  },
-  inlineContainer: {
-    flexDirection: "row"
-  },
-  col1: {
-    flex: 0.6
-  },
-  col2: {
-    flex: 0.4
-  },
-  description: {
-    fontSize: 15
   },
   placeholder: {
     flex: 1,
@@ -173,19 +144,12 @@ const styles = StyleSheet.create({
   panelHeader: {
     height: 120,
     backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
     zIndex: 200
   },
   panel: {
     flex: 1,
     backgroundColor: "white",
     position: "relative"
-  },
-  stampInfo: {
-    flex: 0,
-    justifyContent: "flex-start",
-    alignItems: "flex-start"
   },
   stampPad: {
     flex: 1,
@@ -195,12 +159,15 @@ const styles = StyleSheet.create({
     zIndex: -20
   },
   title: {
-    fontSize: 20
+    fontSize: 20,
+    fontWeight: "bold",
+    margin: 5
   }
 });
 
 RallyDetails.propTypes = {
   isWithinRange: PropTypes.bool,
   selectedLocation: PropTypes.object,
-  collectStamp: PropTypes.func
+  collectStamp: PropTypes.func,
+  distanceToStamp: PropTypes.number
 };

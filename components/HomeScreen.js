@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {
-  StyleSheet,
   Button,
   RefreshControl,
   SectionList,
-  Alert
+  Alert,
+  Platform
 } from "react-native";
 import { Text, ListItem } from "react-native-elements";
 
@@ -28,6 +28,7 @@ export default class HomeScreen extends React.Component {
           params.navigate("Login");
           params.clearCacheOnLogout();
         }}
+        color={Platform.OS === "ios" ? "#fff" : "#D41919"}
       />
     );
     return {
@@ -92,6 +93,7 @@ export default class HomeScreen extends React.Component {
             backgroundColor
           }
         }}
+        containerStyle={{ backgroundColor: "white" }}
       />
     );
   }
@@ -122,17 +124,24 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <SectionList
-        renderSectionHeader={({ section: { title } }) => (
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 20,
-              backgroundColor: "white"
-            }}
-          >
-            {title}
-          </Text>
-        )}
+        renderSectionHeader={({ section: { title, data } }) => {
+          if (data.length > 0) {
+            return (
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: "#fff",
+                  backgroundColor: "#A61414"
+                }}
+              >
+                {title}
+              </Text>
+            );
+          } else {
+            return <Text style={{ height: 0 }} />;
+          }
+        }}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
@@ -147,7 +156,7 @@ export default class HomeScreen extends React.Component {
             data: this.props.chosenRallies.filter((rally) => !rally.completed)
           },
           {
-            title: "Other Rallies",
+            title: "Available Rallies",
             data: this.props.notChosenRallies
           },
           {
@@ -155,6 +164,7 @@ export default class HomeScreen extends React.Component {
             data: this.props.chosenRallies.filter((rally) => rally.completed)
           }
         ]}
+        style={{ backgroundColor: "white" }}
       />
     );
   }

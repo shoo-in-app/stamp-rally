@@ -54,7 +54,8 @@ class DetailsScreen extends React.Component {
       selectedLocationIndex: -1,
       isWithinRange: true,
       userLocation: null,
-      isRallyChosen: this.locations[0].visited !== undefined
+      isRallyChosen: this.locations[0].visited !== undefined,
+      distanceToSelectedLocation: null
     };
 
     this.collectStamp = this.collectStamp.bind(this);
@@ -119,7 +120,11 @@ class DetailsScreen extends React.Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam("title", "Rally Details")
+      title: navigation.getParam("title", "Rally Details"),
+      headerTitleStyle: {
+        fontFamily: "edo",
+        fontSize: 18
+      }
     };
   };
 
@@ -127,7 +132,7 @@ class DetailsScreen extends React.Component {
     this._getLocationAsync();
     timeoutID = setTimeout(() => {
       this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
-    }, 1);
+    }, 50);
   }
 
   componentWillUnmount() {
@@ -196,6 +201,8 @@ class DetailsScreen extends React.Component {
       userCoords.longitude
     );
 
+    this.setState({ distanceToSelectedLocation: distanceToStamp });
+
     return distanceToStamp < COLLECTION_RANGE;
   }
 
@@ -216,11 +223,13 @@ class DetailsScreen extends React.Component {
             selectedLocation={this.state.selectedLocation}
             isWithinRange={this.state.isWithinRange}
             collectStamp={this.collectStamp}
+            distanceToStamp={this.state.distanceToSelectedLocation}
           />
         ) : (
-          <View>
+          <View style={styles.chooseContainer}>
             <Button
               title="Choose this Rally"
+              color="#A61414"
               onPress={() => {
                 axios
                   .patch(
@@ -246,10 +255,11 @@ class DetailsScreen extends React.Component {
 
 const styles = StyleSheet.create({
   map: { height: height - Header.HEIGHT - 120 },
-  details: {
-    flex: 0,
-    flexBasis: 100,
-    height: 100
+  chooseContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white"
   }
 });
 
