@@ -1,7 +1,7 @@
 import React from "react";
-import { View, StatusBar } from "react-native";
+import { StatusBar } from "react-native";
 import { createStackNavigator } from "react-navigation";
-import { Font } from "expo";
+import { Font, AppLoading } from "expo";
 
 import edo from "./assets/fonts/edo.ttf";
 
@@ -51,23 +51,34 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      fontLoaded: false
+      isReady: false
     };
   }
 
-  async componentDidMount() {
-    await Font.loadAsync({
+  async _loadFonts() {
+    return await Font.loadAsync({
       edo
     });
-    this.setState({ fontLoaded: true });
   }
 
   render() {
+    if (!this.state.isReady) {
+      return (
+        <AppLoading
+          startAsync={this._loadFonts}
+          onFinish={() => {
+            this.setState({ isReady: true });
+          }}
+          onError={console.warn}
+        />
+      );
+    }
+
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <StatusBar barStyle="light-content" />
-          {this.state.fontLoaded ? <RootStack /> : <View />}
+          <RootStack />
         </PersistGate>
       </Provider>
     );
