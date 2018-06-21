@@ -36,6 +36,7 @@ export default class RallyDetails extends React.Component {
         height: 0,
         width: 0
       },
+      isStampPadWatermarkVisible: true,
       isStampPadEnabled: false
     };
 
@@ -91,15 +92,17 @@ export default class RallyDetails extends React.Component {
                 onPress={(event) => {
                   if (!this.state.isStampPadEnabled) return;
                   const SIZE = 200;
+                  const MARGIN = 20;
                   this.setState({
                     bigStampStyle: {
                       height: SIZE,
                       width: SIZE,
-                      left: event.nativeEvent.locationX - SIZE / 2,
-                      top: event.nativeEvent.locationY - SIZE / 2,
+                      left: event.nativeEvent.locationX - SIZE + MARGIN,
+                      top: event.nativeEvent.locationY - SIZE + MARGIN,
                       zIndex: -50
                     },
-                    isStampPadEnabled: false
+                    isStampPadEnabled: false,
+                    isStampPadWatermarkVisible: false
                   });
                   this.props.collectStamp(this.props.selectedLocation.id);
                   slideDownTimeoutId = setTimeout(() => {
@@ -108,16 +111,21 @@ export default class RallyDetails extends React.Component {
                       bigStampStyle: {
                         height: 0,
                         width: 0
-                      }
+                      },
+                      isStampPadWatermarkVisible: true
                     });
                   }, 2000);
                 }}
                 underlayColor={"white"}
               >
-                <Image
-                  source={stampCollectedImgBig}
-                  style={this.state.bigStampStyle}
-                />
+                {this.state.isStampPadWatermarkVisible ? (
+                  <Text style={styles.stampPadWatermark}>Touch to stamp</Text>
+                ) : (
+                  <Image
+                    source={stampCollectedImgBig}
+                    style={this.state.bigStampStyle}
+                  />
+                )}
               </TouchableHighlight>
             ) : (
               <View />
@@ -152,10 +160,16 @@ const styles = StyleSheet.create({
   },
   stampPad: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     width: width - 20,
     margin: 10,
     backgroundColor: "white",
     zIndex: -20
+  },
+  stampPadWatermark: {
+    fontSize: 24,
+    color: "grey"
   },
   title: {
     fontSize: 20,

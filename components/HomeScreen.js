@@ -132,7 +132,10 @@ export default class HomeScreen extends React.Component {
                   fontWeight: "bold",
                   fontSize: 20,
                   color: "#fff",
-                  backgroundColor: "#A61414"
+                  backgroundColor: "#A61414",
+                  paddingLeft: 10,
+                  paddingTop: 5,
+                  paddingBottom: 5
                 }}
               >
                 {title}

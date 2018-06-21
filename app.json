@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "shoo-in",
+    "name": "Shoo-in",
     "description": "Collect stamps around the world using shoo-in!",
-    "slug": "stamp-rally",
+    "slug": "shoo-in",
     "privacy": "public",
     "sdkVersion": "27.0.0",
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
+    "primaryColor": "#A61414",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -19,11 +20,26 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.stampRally"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.shoo-in.stamp-rally",
+      "buildNumber": "1.0.1",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription":
+          "This app uses your location to determine if you are close enough to collect a stamp."
+      },
+      "config": {
+        "googleSignIn": {
+          "reservedClientId":
+            "com.googleusercontent.apps.309418440628-ugqaajesnefhkjt4h6e5o308144jecgc"
+        }
+      }
     },
     "android": {
-      "package": "com.stampRally"
+      "package": "com.shooin.stamprally"
+    },
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#A61414"
     }
   }
 }

@@ -1,13 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { MapView } from "expo";
-import { Button, StyleSheet, View, Alert, Dimensions } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  View,
+  Alert,
+  Dimensions,
+  Image,
+  Platform
+} from "react-native";
 import { Location, Permissions } from "expo";
 import axios from "axios";
 import { Header } from "react-navigation";
 
-import uncollectedStampImg from "../assets/markers/stamp-uncollected.png";
-import collectedStampImg from "../assets/markers/stamp-collected.png";
+import uncollectedStampImg from "../assets/markers/stamp-uncollected-small.png";
+import collectedStampImg from "../assets/markers/stamp-collected-small.png";
 
 import RallyDetails from "./RallyDetails";
 let timeoutID;
@@ -36,7 +44,13 @@ class DetailsScreen extends React.Component {
           }}
           title={location.title}
           description={location.description}
-          image={location.visited ? collectedStampImg : uncollectedStampImg}
+          image={
+            Platform.OS === "android"
+              ? location.visited
+                ? collectedStampImg
+                : uncollectedStampImg
+              : undefined
+          }
           onPress={() => {
             this.setState({
               selectedLocation: location,
@@ -44,7 +58,18 @@ class DetailsScreen extends React.Component {
               selectedLocationIndex: index
             });
           }}
-        />
+        >
+          {Platform.OS === "ios" ? (
+            location.visited ? (
+              <Image source={collectedStampImg} style={styles.mapMarkerImage} />
+            ) : (
+              <Image
+                source={uncollectedStampImg}
+                style={styles.mapMarkerImage}
+              />
+            )
+          ) : null}
+        </MapView.Marker>
       );
     });
 
@@ -86,13 +111,20 @@ class DetailsScreen extends React.Component {
               }}
               title={this.state.selectedLocation.title}
               description={this.state.selectedLocation.description}
-              image={collectedStampImg}
+              image={Platform.OS === "android" ? collectedStampImg : undefined}
               onPress={() => {
                 this.setState({
                   selectedLocation: thisLocation
                 });
               }}
-            />
+            >
+              {Platform.OS === "ios" ? (
+                <Image
+                  source={collectedStampImg}
+                  style={styles.mapMarkerImage}
+                />
+              ) : null}
+            </MapView.Marker>
           );
           const newState = {
             ...oldState,
@@ -143,9 +175,16 @@ class DetailsScreen extends React.Component {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
       Alert.alert(
-        "Error",
+        "Location Permissions Denied",
         "You must grant location permission to this app in order to collect stamps.",
-        [{ text: "OK", onPress: () => {} }]
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              this.props.navigation.navigate("Home");
+            }
+          }
+        ]
       );
       return;
     }
@@ -260,6 +299,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white"
+  },
+  mapMarkerImage: {
+    height: 48,
+    width: 48
   }
 });
 
