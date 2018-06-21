@@ -22,7 +22,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.shoo-in.stamp-rally",
-      "buildNumber": "1.0",
+      "buildNumber": "1.0.1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription":
           "This app uses your location to determine if you are close enough to collect a stamp."
