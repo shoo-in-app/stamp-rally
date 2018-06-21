@@ -175,9 +175,16 @@ class DetailsScreen extends React.Component {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
       Alert.alert(
-        "Error",
+        "Location Permissions Denied",
         "You must grant location permission to this app in order to collect stamps.",
-        [{ text: "OK", onPress: () => {} }]
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              this.props.navigation.navigate("Home");
+            }
+          }
+        ]
       );
       return;
     }
