@@ -24,6 +24,8 @@ export default class LoginScreen extends React.Component {
         "309418440628-lchfubsqb1q49q9h4ghqrjia4tlrfenj.apps.googleusercontent.com",
       iosClientId:
         "309418440628-t2gt9pl1cbtu4jr5crbb836fqj4nsa13.apps.googleusercontent.com",
+      iosStandaloneAppClientId:
+        "309418440628-ugqaajesnefhkjt4h6e5o308144jecgc.apps.googleusercontent.com",
       scopes: ["profile", "email"]
     })
       .then((result) => {
