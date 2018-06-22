@@ -22,7 +22,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.shoo-in.stamp-rally",
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.0.2",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription":
           "This app uses your location to determine if you are close enough to collect a stamp."
@@ -35,7 +35,15 @@
       }
     },
     "android": {
-      "package": "com.shooin.stamprally"
+      "package": "com.shooin.stamprally",
+      "versionCode": 1,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyA4W6hCyZ6VWuq2L5tcN1avfvUiPsejpt8",
+          "certificateHash": "3C0034ED9375FAAEED8819C92607BA185A0E459D"
+        }
+      }
     },
     "androidStatusBar": {
       "barStyle": "light-content",
