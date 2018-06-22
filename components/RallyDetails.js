@@ -36,7 +36,7 @@ export default class RallyDetails extends React.Component {
         height: 0,
         width: 0
       },
-      isStampPadWatermarkVisible: true,
+      isStampCollected: true,
       isStampPadEnabled: false
     };
 
@@ -87,46 +87,49 @@ export default class RallyDetails extends React.Component {
           </View>
           <View style={styles.panelBody}>
             {this.props.selectedLocation ? (
-              <TouchableHighlight
-                style={styles.stampPad}
-                onPress={(event) => {
-                  if (!this.state.isStampPadEnabled) return;
-                  const SIZE = 200;
-                  const MARGIN = 20;
-                  this.setState({
-                    bigStampStyle: {
-                      height: SIZE,
-                      width: SIZE,
-                      left: event.nativeEvent.locationX - SIZE + MARGIN,
-                      top: event.nativeEvent.locationY - SIZE + MARGIN,
-                      zIndex: -50
-                    },
-                    isStampPadEnabled: false,
-                    isStampPadWatermarkVisible: false
-                  });
-                  this.props.collectStamp(this.props.selectedLocation.id);
-                  slideDownTimeoutId = setTimeout(() => {
-                    this._panel.transitionTo(MIN_PANEL);
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <Text style={styles.stampPadTitle}>
+                  {this.state.isStampCollected
+                    ? "Touch to stamp"
+                    : "Stamp collected!"}
+                </Text>
+                <TouchableHighlight
+                  style={styles.stampPad}
+                  onPress={(event) => {
+                    if (!this.state.isStampPadEnabled) return;
+                    const SIZE = 200;
                     this.setState({
                       bigStampStyle: {
-                        height: 0,
-                        width: 0
+                        height: SIZE,
+                        width: SIZE,
+                        left: event.nativeEvent.locationX - SIZE / 2,
+                        top: event.nativeEvent.locationY - SIZE / 2,
+                        zIndex: -50,
+                        position: "absolute"
                       },
-                      isStampPadWatermarkVisible: true
+                      isStampPadEnabled: false,
+                      isStampCollected: false
                     });
-                  }, 2000);
-                }}
-                underlayColor={"white"}
-              >
-                {this.state.isStampPadWatermarkVisible ? (
-                  <Text style={styles.stampPadWatermark}>Touch to stamp</Text>
-                ) : (
+                    this.props.collectStamp(this.props.selectedLocation.id);
+                    slideDownTimeoutId = setTimeout(() => {
+                      this._panel.transitionTo(MIN_PANEL);
+                      this.setState({
+                        bigStampStyle: {
+                          height: 0,
+                          width: 0
+                        },
+                        isStampCollected: true
+                      });
+                    }, 1800);
+                  }}
+                  underlayColor={"white"}
+                >
                   <Image
                     source={stampCollectedImgBig}
                     style={this.state.bigStampStyle}
                   />
-                )}
-              </TouchableHighlight>
+                </TouchableHighlight>
+              </View>
             ) : (
               <View />
             )}
@@ -167,9 +170,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     zIndex: -20
   },
-  stampPadWatermark: {
+  stampPadTitle: {
+    marginTop: 5,
     fontSize: 24,
-    color: "grey"
+    color: "white"
   },
   title: {
     fontSize: 20,

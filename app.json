@@ -4,7 +4,7 @@
     "description": "Collect stamps around the world using shoo-in!",
     "slug": "shoo-in",
     "privacy": "public",
-    "sdkVersion": "27.0.0",
+    "sdkVersion": "28.0.0",
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.shoo-in.stamp-rally",
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.0.2",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription":
           "This app uses your location to determine if you are close enough to collect a stamp."
@@ -37,7 +37,18 @@
       }
     },
     "android": {
-      "package": "com.shooin.stamprally"
+      "package": "com.shooin.stamprally",
+      "versionCode": 1,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyA4W6hCyZ6VWuq2L5tcN1avfvUiPsejpt8",
+          "certificateHash": "3C0034ED9375FAAEED8819C92607BA185A0E459D"
+        },
+        "googleMaps": {
+          "apiKey": "AIzaSyA4W6hCyZ6VWuq2L5tcN1avfvUiPsejpt8"
+        }
+      }
     },
     "androidStatusBar": {
       "barStyle": "light-content",

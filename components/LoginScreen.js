@@ -22,6 +22,8 @@ export default class LoginScreen extends React.Component {
     Expo.Google.logInAsync({
       androidClientId:
         "309418440628-lchfubsqb1q49q9h4ghqrjia4tlrfenj.apps.googleusercontent.com",
+      androidStandaloneAppClientId:
+        "309418440628-l8icujmhl4sl3nigbr47tkmvqng5gavf.apps.googleusercontent.com",
       iosClientId:
         "309418440628-t2gt9pl1cbtu4jr5crbb836fqj4nsa13.apps.googleusercontent.com",
       iosStandaloneAppClientId:
