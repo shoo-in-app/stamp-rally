@@ -89,6 +89,7 @@ export default class HomeScreen extends React.Component {
             rallyID: data.item.id,
             title: data.item.title,
             locations: data.item.locations,
+            expiryTime: data.item.end_datetime,
             reloadData: this.reloadData,
             userLocation: this.state.userLocation,
             isLocationPermissionGranted: this.state.isLocationPermissionGranted
@@ -211,7 +212,13 @@ export default class HomeScreen extends React.Component {
         sections={[
           {
             title: "Your Rallies",
-            data: this.props.chosenRallies.filter((rally) => !rally.complete)
+            data: this.props.chosenRallies
+              .filter((rally) => !rally.complete)
+              .sort((a, b) => {
+                if (a.end_datetime < b.end_datetime) return -1;
+                if (a.end_datetime > b.end_datetime) return 1;
+                else return 0;
+              })
           },
           {
             title: "Available Rallies",
