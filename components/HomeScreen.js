@@ -156,7 +156,7 @@ export default class HomeScreen extends React.Component {
         sections={[
           {
             title: "Your Rallies",
-            data: this.props.chosenRallies.filter((rally) => !rally.completed)
+            data: this.props.chosenRallies.filter((rally) => !rally.complete)
           },
           {
             title: "Available Rallies",
@@ -164,7 +164,7 @@ export default class HomeScreen extends React.Component {
           },
           {
             title: "Completed Rallies",
-            data: this.props.chosenRallies.filter((rally) => rally.completed)
+            data: this.props.chosenRallies.filter((rally) => rally.complete)
           }
         ]}
         style={{ backgroundColor: "white" }}
