@@ -28,7 +28,8 @@ import LoginScreen from "./containers/LoginScreen";
 const RootStack = createStackNavigator(
   {
     Home: HomeScreen,
-    Details: DetailsScreen
+    Details: DetailsScreen,
+    Login: LoginScreen
   },
   {
     initialRouteName: "Login",
