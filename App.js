@@ -27,7 +27,6 @@ import LoginScreen from "./containers/LoginScreen";
 
 const RootStack = createStackNavigator(
   {
-    Login: LoginScreen,
     Home: HomeScreen,
     Details: DetailsScreen
   },
