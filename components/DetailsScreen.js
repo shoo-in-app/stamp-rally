@@ -9,7 +9,8 @@ import {
   Dimensions,
   Image,
   Platform,
-  Text
+  Text,
+  Modal
 } from "react-native";
 import axios from "axios";
 import { Header } from "react-navigation";
@@ -23,6 +24,8 @@ import RallyDetails from "./RallyDetails";
 let timeoutID;
 
 const { height } = Dimensions.get("window");
+
+const PANEL_DELAY = 1800;
 
 class DetailsScreen extends React.Component {
   constructor(props) {
@@ -87,7 +90,9 @@ class DetailsScreen extends React.Component {
       isWithinRange: true,
       userLocation: null,
       isRallyChosen: this.locations[0].visited !== undefined,
-      distanceToSelectedLocation: null
+      distanceToSelectedLocation: null,
+      isModalVisible: false,
+      totalVisited: this.locations.filter((location) => location.visited).length
     };
 
     this.collectStamp = this.collectStamp.bind(this);
@@ -143,11 +148,21 @@ class DetailsScreen extends React.Component {
             selectedLocation: {
               ...oldState.selectedLocation,
               visited: true
-            }
+            },
+            totalVisited: oldState.totalVisited + 1
           };
 
           return newState;
         });
+      })
+      .then(() => {
+        if (this.state.totalVisited >= this.locations.length) {
+          new Promise((resolve) => {
+            setTimeout(resolve, 1800);
+          }).then(() => {
+            this.setState({ isModalVisible: true });
+          });
+        }
       })
       .catch(() => {
         Alert.alert(
@@ -183,7 +198,6 @@ class DetailsScreen extends React.Component {
       );
       return;
     }
-    // this._getLocationAsync();
     timeoutID = setTimeout(() => {
       this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
     }, 50);
@@ -209,7 +223,7 @@ class DetailsScreen extends React.Component {
   }
 
   isWithinRange(location) {
-    const COLLECTION_RANGE = 25;
+    const COLLECTION_RANGE = 5000;
 
     if (this.isRallyChosen) return;
     // user location marker
@@ -230,6 +244,38 @@ class DetailsScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, flexDirection: "column" }}>
+        <Modal
+          animationType="fade"
+          visible={this.state.isModalVisible}
+          transparent={true}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              width: "80%",
+              alignSelf: "center",
+              marginTop: height / 2,
+              padding: 10,
+              borderRadius: 5
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold"
+              }}
+            >
+              Rally complete!
+            </Text>
+            <Text>You got XXX points!</Text>
+            <Button
+              title="Dismiss"
+              onPress={() => {
+                this.setState({ isModalVisible: false });
+              }}
+            />
+          </View>
+        </Modal>
         <MapView
           style={styles.map}
           ref={(ref) => {
@@ -246,6 +292,7 @@ class DetailsScreen extends React.Component {
             collectStamp={this.collectStamp}
             distanceToStamp={this.state.distanceToSelectedLocation}
             expiryTime={this.expiryTime}
+            PANEL_DELAY={PANEL_DELAY}
           />
         ) : (
           <View style={styles.chooseContainer}>

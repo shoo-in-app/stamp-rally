@@ -39,7 +39,8 @@ export default class RallyDetails extends React.Component {
         width: 0
       },
       isStampCollected: true,
-      isStampPadEnabled: false
+      isStampPadEnabled: false,
+      isModalVisible: false
     };
 
     this.maximiseStampPad = this.maximiseStampPad.bind(this);
@@ -123,7 +124,7 @@ export default class RallyDetails extends React.Component {
                         },
                         isStampCollected: true
                       });
-                    }, 1800);
+                    }, this.props.PANEL_DELAY);
                   }}
                   underlayColor={"white"}
                 >
@@ -190,5 +191,6 @@ RallyDetails.propTypes = {
   selectedLocation: PropTypes.object,
   collectStamp: PropTypes.func,
   distanceToStamp: PropTypes.number,
-  expiryTime: PropTypes.string.isRequired
+  expiryTime: PropTypes.string.isRequired,
+  PANEL_DELAY: PropTypes.number.isRequired
 };
