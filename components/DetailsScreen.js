@@ -8,10 +8,13 @@ import {
   Alert,
   Dimensions,
   Image,
-  Platform
+  Platform,
+  Text
 } from "react-native";
 import axios from "axios";
 import { Header } from "react-navigation";
+
+import moment from "moment";
 
 import uncollectedStampImg from "../assets/markers/stamp-uncollected-small.png";
 import collectedStampImg from "../assets/markers/stamp-collected-small.png";
@@ -27,6 +30,7 @@ class DetailsScreen extends React.Component {
     this.mapRef = null;
 
     this.rallyID = this.props.navigation.getParam("rallyID", null);
+    this.expiryTime = this.props.navigation.getParam("expiryTime");
     this.locations = this.props.navigation.getParam("locations", []);
     this.reloadData = this.props.navigation.getParam("reloadData");
     this.userLocation = this.props.navigation.getParam("userLocation");
@@ -263,6 +267,7 @@ class DetailsScreen extends React.Component {
                   });
               }}
             />
+            <Text>Expires {moment(this.expiryTime).fromNow()}</Text>
           </View>
         )}
       </View>
