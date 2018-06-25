@@ -20,5 +20,9 @@ module.exports = {
     quotes: ["error", "double"],
     semi: ["error", "always"],
     "react/prop-types": ["error", { ignore: ["navigation"] }]
-  }
+  },
+  extends: [
+    "prettier",
+    "prettier/react"
+  ]
 };

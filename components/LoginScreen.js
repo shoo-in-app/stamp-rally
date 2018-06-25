@@ -1,8 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Alert, Image } from "react-native";
 import Expo from "expo";
-import Axios from "axios";
+import axios from "axios";
+
+import logo from "../assets/icon.png";
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -20,22 +22,31 @@ export default class LoginScreen extends React.Component {
     Expo.Google.logInAsync({
       androidClientId:
         "309418440628-lchfubsqb1q49q9h4ghqrjia4tlrfenj.apps.googleusercontent.com",
+      androidStandaloneAppClientId:
+        "309418440628-l8icujmhl4sl3nigbr47tkmvqng5gavf.apps.googleusercontent.com",
       iosClientId:
         "309418440628-t2gt9pl1cbtu4jr5crbb836fqj4nsa13.apps.googleusercontent.com",
+      iosStandaloneAppClientId:
+        "309418440628-ugqaajesnefhkjt4h6e5o308144jecgc.apps.googleusercontent.com",
       scopes: ["profile", "email"]
     })
       .then((result) => {
         if (result.type === "success") {
           const body = {
-            idToken: result.idToken,
-            username: result.user.email.split("@")[0]
+            email: result.user.email
           };
-          Axios.post("https://cc4-flower-dev.herokuapp.com/user", body)
-            .then(() => {
-              this.props.setUserID(result.idToken);
+          axios
+            .post("https://cc4-flower.herokuapp.com/mobile-api/user", body)
+            .then((res) => {
+              this.props.setUserID(res.data.userId);
               this.props.navigation.navigate("Home");
             })
             .catch(() => {
+              Alert.alert(
+                "Connection error",
+                "There seems to be a problem with the connection to our server. Please try again later.",
+                [{ text: "OK", onPress: () => {} }]
+              );
               this.setState({ cancelled: true });
             });
         } else {
@@ -50,8 +61,13 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>{this.state.cancelled ? "Login failed" : "Please Login!"}</Text>
-        <Button title="Login with Google" onPress={() => this.login()} />
+        <Image source={logo} style={styles.logo} />
+        <Text>{this.state.cancelled ? "Login failed." : ""}</Text>
+        <Button
+          title="Login with Google"
+          color="#A61414"
+          onPress={() => this.login()}
+        />
       </View>
     );
   }
@@ -63,6 +79,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  logo: {
+    height: 200,
+    width: 200,
+    margin: 20
   }
 });
 

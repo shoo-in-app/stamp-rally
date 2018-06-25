@@ -1,22 +1,36 @@
 import { connect } from "react-redux";
 import HomeScreen from "../components/HomeScreen";
-import { loadRallies, setUserID } from "../reducer.js";
+import {
+  loadChosenRallies,
+  loadNotChosenRallies,
+  setUserID,
+  clearCacheOnLogout
+} from "../reducer.js";
 
 const mapStateToProps = (state) => {
   return {
-    rallies: state.rallies
+    chosenRallies: state.chosenRallies,
+    notChosenRallies: state.notChosenRallies,
+    userID: state.userID
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loadRallies: (rallies) => {
-      const action = loadRallies(rallies);
+    loadChosenRallies: (rallies) => {
+      const action = loadChosenRallies(rallies);
+      dispatch(action);
+    },
+    loadNotChosenRallies: (rallies) => {
+      const action = loadNotChosenRallies(rallies);
       dispatch(action);
     },
     setUserID: (userID) => {
       const action = setUserID(userID);
       dispatch(action);
+    },
+    clearCacheOnLogout: () => {
+      dispatch(clearCacheOnLogout());
     }
   };
 };

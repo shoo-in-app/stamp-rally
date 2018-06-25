@@ -1,16 +1,14 @@
 {
   "expo": {
-    "name": "stamp-rally",
-    "description": "This project is really great.",
-    "slug": "stamp-rally",
+    "name": "Shoo-in",
+    "description": "Collect stamps around the world using shoo-in!",
+    "slug": "shoo-in",
     "privacy": "public",
-    "sdkVersion": "27.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "sdkVersion": "28.0.0",
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
+    "primaryColor": "#A61414",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -20,13 +18,41 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.stampRally"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.shoo-in.stamp-rally",
+      "buildNumber": "1.0.2",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription":
+          "This app uses your location to determine if you are close enough to collect a stamp."
+      },
+      "config": {
+        "googleSignIn": {
+          "reservedClientId":
+            "com.googleusercontent.apps.309418440628-ugqaajesnefhkjt4h6e5o308144jecgc"
+        }
+      }
     },
     "android": {
-      "package": "com.stampRally"
+      "package": "com.shooin.stamprally",
+      "versionCode": 1,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyA4W6hCyZ6VWuq2L5tcN1avfvUiPsejpt8",
+          "certificateHash": "3C0034ED9375FAAEED8819C92607BA185A0E459D"
+        },
+        "googleMaps": {
+          "apiKey": "AIzaSyA4W6hCyZ6VWuq2L5tcN1avfvUiPsejpt8"
+        }
+      }
+    },
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#A61414"
     }
   }
 }
