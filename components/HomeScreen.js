@@ -179,76 +179,89 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return this.state.isReady ? (
-      <SectionList
-        renderSectionHeader={({ section: { title, data } }) => {
-          if (data.length > 0) {
-            return (
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: "#fff",
-                  backgroundColor: "#A61414",
-                  paddingLeft: 10,
-                  paddingTop: 5,
-                  paddingBottom: 5
-                }}
-              >
-                {title}
-              </Text>
-            );
-          } else {
-            return <Text style={{ height: 0 }} />;
+      <View style={{ backgroundColor: "white", flex: 1 }}>
+        <Text
+          style={{
+            backgroundColor: "#A61414",
+            color: "white",
+            textAlign: "center",
+            fontSize: 16,
+            padding: 5
+          }}
+        >
+          You have {this.props.userExp} points!
+        </Text>
+        <SectionList
+          renderSectionHeader={({ section: { title, data } }) => {
+            if (data.length > 0) {
+              return (
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    color: "#fff",
+                    backgroundColor: "#A61414",
+                    paddingLeft: 10,
+                    paddingTop: 5,
+                    paddingBottom: 5
+                  }}
+                >
+                  {title}
+                </Text>
+              );
+            } else {
+              return <Text style={{ height: 0 }} />;
+            }
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
           }
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh.bind(this)}
-          />
-        }
-        keyExtractor={(item) => item.id}
-        renderItem={(data) => this.getRally(data)}
-        sections={[
-          {
-            title: "Your Rallies",
-            data: this.props.chosenRallies
-              .filter((rally) => !rally.complete)
-              .sort((a, b) => {
-                if (a.end_datetime < b.end_datetime) return -1;
-                if (a.end_datetime > b.end_datetime) return 1;
-                else return 0;
-              })
-          },
-          {
-            title: "Available Rallies",
-            data: this.props.notChosenRallies.sort((a, b) => {
-              if (!this.state.userLocation) return 0;
-              if (
-                this.distanceToUser(
-                  a.lat,
-                  a.lng,
-                  this.state.userLocation.props.coordinate.latitude,
-                  this.state.userLocation.props.coordinate.longitude
-                ) <
-                this.distanceToUser(
-                  b.lat,
-                  b.lng,
-                  this.state.userLocation.props.coordinate.latitude,
-                  this.state.userLocation.props.coordinate.longitude
+          keyExtractor={(item) => item.id}
+          renderItem={(data) => this.getRally(data)}
+          sections={[
+            {
+              title: "Your Rallies",
+              data: this.props.chosenRallies
+                .filter((rally) => !rally.complete)
+                .sort((a, b) => {
+                  if (a.end_datetime < b.end_datetime) return -1;
+                  if (a.end_datetime > b.end_datetime) return 1;
+                  else return 0;
+                })
+            },
+            {
+              title: "Available Rallies",
+              data: this.props.notChosenRallies.sort((a, b) => {
+                if (!this.state.userLocation) return 0;
+                if (
+                  this.distanceToUser(
+                    a.lat,
+                    a.lng,
+                    this.state.userLocation.props.coordinate.latitude,
+                    this.state.userLocation.props.coordinate.longitude
+                  ) <
+                  this.distanceToUser(
+                    b.lat,
+                    b.lng,
+                    this.state.userLocation.props.coordinate.latitude,
+                    this.state.userLocation.props.coordinate.longitude
+                  )
                 )
-              )
-                return -1;
-              else return 1;
-            })
-          },
-          {
-            title: "Completed Rallies",
-            data: this.props.chosenRallies.filter((rally) => rally.complete)
-          }
-        ]}
-        style={{ backgroundColor: "white" }}
-      />
+                  return -1;
+                else return 1;
+              })
+            },
+            {
+              title: "Completed Rallies",
+              data: this.props.chosenRallies.filter((rally) => rally.complete)
+            }
+          ]}
+          style={{ backgroundColor: "white" }}
+        />
+      </View>
     ) : (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text style={{ color: "grey", fontSize: 20 }}>Updating Rallies...</Text>
@@ -259,6 +272,7 @@ export default class HomeScreen extends React.Component {
 
 HomeScreen.propTypes = {
   userID: PropTypes.string.isRequired,
+  userExp: PropTypes.number.isRequired,
   setUserID: PropTypes.func.isRequired,
   loadChosenRallies: PropTypes.func.isRequired,
   loadNotChosenRallies: PropTypes.func.isRequired,
