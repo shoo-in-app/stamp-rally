@@ -227,7 +227,7 @@ class DetailsScreen extends React.Component {
   }
 
   isWithinRange(location) {
-    const COLLECTION_RANGE = 5000;
+    const COLLECTION_RANGE = 25;
 
     if (this.isRallyChosen) return;
     // user location marker
