@@ -5,15 +5,21 @@ import {
   RefreshControl,
   SectionList,
   Alert,
-  Platform
+  Platform,
+  Text,
+  View
 } from "react-native";
-import { Text, ListItem } from "react-native-elements";
+import { ListItem } from "react-native-elements";
+import { Location, Permissions, MapView } from "expo";
 
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      refreshing: false
+      refreshing: false,
+      userLocation: null,
+      isLocationPermissionGranted: true,
+      isReady: false
     };
 
     this.reloadData = this.reloadData.bind(this);
@@ -38,7 +44,8 @@ export default class HomeScreen extends React.Component {
     };
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    await this._getLocationAsync();
     this.reloadData();
   }
 
@@ -82,7 +89,9 @@ export default class HomeScreen extends React.Component {
             rallyID: data.item.id,
             title: data.item.title,
             locations: data.item.locations,
-            reloadData: this.reloadData
+            reloadData: this.reloadData,
+            userLocation: this.state.userLocation,
+            isLocationPermissionGranted: this.state.isLocationPermissionGranted
           })
         }
         subtitle={data.item.description}
@@ -97,6 +106,37 @@ export default class HomeScreen extends React.Component {
       />
     );
   }
+
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== "granted") {
+      this.setState({ isLocationPermissionGranted: false, isReady: true });
+      return;
+    }
+
+    await Location.watchPositionAsync(
+      {
+        enableHighAccuracy: true,
+        distanceInterval: 1,
+        timeInterval: 200
+      },
+      (location) => {
+        const userLocation = (
+          <MapView.Marker
+            key={"userLocation"}
+            identifier={location.identifier}
+            coordinate={location.coords}
+            title="Your location"
+            description="This is your current location"
+            pinColor="blue"
+          />
+        );
+        this.setState({ userLocation });
+      }
+    );
+
+    this.setState({ isReady: true });
+  };
 
   _onRefresh() {
     this.setState({ refreshing: true });
@@ -121,8 +161,23 @@ export default class HomeScreen extends React.Component {
       });
   }
 
+  distanceToUser(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    return d * 1000; // Distance in m
+  }
+
   render() {
-    return (
+    return this.state.isReady ? (
       <SectionList
         renderSectionHeader={({ section: { title, data } }) => {
           if (data.length > 0) {
@@ -160,7 +215,25 @@ export default class HomeScreen extends React.Component {
           },
           {
             title: "Available Rallies",
-            data: this.props.notChosenRallies
+            data: this.props.notChosenRallies.sort((a, b) => {
+              if (!this.state.userLocation) return 0;
+              if (
+                this.distanceToUser(
+                  a.lat,
+                  a.lng,
+                  this.state.userLocation.props.coordinate.latitude,
+                  this.state.userLocation.props.coordinate.longitude
+                ) <
+                this.distanceToUser(
+                  b.lat,
+                  b.lng,
+                  this.state.userLocation.props.coordinate.latitude,
+                  this.state.userLocation.props.coordinate.longitude
+                )
+              )
+                return -1;
+              else return 1;
+            })
           },
           {
             title: "Completed Rallies",
@@ -169,6 +242,10 @@ export default class HomeScreen extends React.Component {
         ]}
         style={{ backgroundColor: "white" }}
       />
+    ) : (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text style={{ color: "grey", fontSize: 20 }}>Updating Rallies...</Text>
+      </View>
     );
   }
 }

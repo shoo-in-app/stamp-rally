@@ -10,7 +10,6 @@ import {
   Image,
   Platform
 } from "react-native";
-import { Location, Permissions } from "expo";
 import axios from "axios";
 import { Header } from "react-navigation";
 
@@ -30,6 +29,10 @@ class DetailsScreen extends React.Component {
     this.rallyID = this.props.navigation.getParam("rallyID", null);
     this.locations = this.props.navigation.getParam("locations", []);
     this.reloadData = this.props.navigation.getParam("reloadData");
+    this.userLocation = this.props.navigation.getParam("userLocation");
+    this.isLocationPermissionGranted = this.props.navigation.getParam(
+      "isLocationPermissionGranted"
+    );
 
     this.markerIDs = [];
     this.markers = this.locations.map((location, index) => {
@@ -161,19 +164,7 @@ class DetailsScreen extends React.Component {
   };
 
   componentDidMount() {
-    this._getLocationAsync();
-    timeoutID = setTimeout(() => {
-      this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
-    }, 50);
-  }
-
-  componentWillUnmount() {
-    if (timeoutID) clearTimeout(timeoutID);
-  }
-
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
+    if (!this.isLocationPermissionGranted) {
       Alert.alert(
         "Location Permissions Denied",
         "You must grant location permission to this app in order to collect stamps.",
@@ -188,28 +179,15 @@ class DetailsScreen extends React.Component {
       );
       return;
     }
+    // this._getLocationAsync();
+    timeoutID = setTimeout(() => {
+      this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
+    }, 50);
+  }
 
-    await Location.watchPositionAsync(
-      {
-        enableHighAccuracy: true,
-        distanceInterval: 1,
-        timeInterval: 200
-      },
-      (location) => {
-        const userLocation = (
-          <MapView.Marker
-            key={"userLocation"}
-            identifier={location.identifier}
-            coordinate={location.coords}
-            title="Your location"
-            description="This is your current location"
-            pinColor="blue"
-          />
-        );
-        this.setState({ userLocation });
-      }
-    );
-  };
+  componentWillUnmount() {
+    if (timeoutID) clearTimeout(timeoutID);
+  }
 
   distanceToStamp(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
@@ -231,7 +209,7 @@ class DetailsScreen extends React.Component {
 
     if (this.isRallyChosen) return;
     // user location marker
-    const userCoords = this.state.userLocation.props.coordinate;
+    const userCoords = this.userLocation.props.coordinate;
     // the other location markers
     const distanceToStamp = this.distanceToStamp(
       location.lat,
@@ -255,7 +233,7 @@ class DetailsScreen extends React.Component {
           }}
         >
           {this.state.markers}
-          {this.state.userLocation}
+          {this.userLocation}
         </MapView>
         {this.state.isRallyChosen ? (
           <RallyDetails
