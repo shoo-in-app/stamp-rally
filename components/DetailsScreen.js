@@ -245,6 +245,7 @@ class DetailsScreen extends React.Component {
             isWithinRange={this.state.isWithinRange}
             collectStamp={this.collectStamp}
             distanceToStamp={this.state.distanceToSelectedLocation}
+            expiryTime={this.expiryTime}
           />
         ) : (
           <View style={styles.chooseContainer}>

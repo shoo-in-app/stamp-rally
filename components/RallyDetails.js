@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { Header } from "react-navigation";
 
+import moment from "moment";
+
 import LocationDetails from "./LocationDetails";
 
 import stampCollectedImgBig from "../assets/markers/stamp-collected-big.png";
@@ -82,6 +84,7 @@ export default class RallyDetails extends React.Component {
             ) : (
               <View style={styles.placeholder}>
                 <Text style={styles.title}>Select a location!</Text>
+                <Text>Expires {moment(this.props.expiryTime).fromNow()}</Text>
               </View>
             )}
           </View>
@@ -186,5 +189,6 @@ RallyDetails.propTypes = {
   isWithinRange: PropTypes.bool,
   selectedLocation: PropTypes.object,
   collectStamp: PropTypes.func,
-  distanceToStamp: PropTypes.number
+  distanceToStamp: PropTypes.number,
+  expiryTime: PropTypes.string.isRequired
 };
