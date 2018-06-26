@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   Image,
   Button,
-  Alert
+  Alert,
+  Platform
 } from "react-native";
 import { Header } from "react-navigation";
 
@@ -23,7 +24,7 @@ import SlidingUpPanel from "rn-sliding-up-panel";
 const { height, width } = Dimensions.get("window");
 
 const MAX_PANEL = height - 120;
-const MIN_PANEL = 185;
+const MIN_PANEL = Platform.OS === "ios" ? 185 : 185 + 48;
 
 let slideDownTimeoutId;
 
