@@ -6,9 +6,13 @@ import {
   View,
   Dimensions,
   TouchableHighlight,
-  Image
+  Image,
+  Button,
+  Alert
 } from "react-native";
 import { Header } from "react-navigation";
+
+import moment from "moment";
 
 import LocationDetails from "./LocationDetails";
 
@@ -37,7 +41,8 @@ export default class RallyDetails extends React.Component {
         width: 0
       },
       isStampCollected: true,
-      isStampPadEnabled: false
+      isStampPadEnabled: false,
+      isModalVisible: false
     };
 
     this.maximiseStampPad = this.maximiseStampPad.bind(this);
@@ -72,7 +77,38 @@ export default class RallyDetails extends React.Component {
       >
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
-            {this.props.selectedLocation ? (
+            {this.props.isCompleted ||
+            moment(this.props.expiryTime).isBefore() ? (
+              <View style={styles.placeholder}>
+                <Text style={styles.title}>
+                  Rally
+                  {this.props.isCompleted ? " Complete" : " Expired"}!
+                </Text>
+                <Button
+                  title="Delete Rally"
+                  onPress={() => {
+                    Alert.alert(
+                      "Delete Rally",
+                      "Are you sure you wish to delete this rally? Your progress will be lost.",
+                      [
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Delete",
+                          onPress: () => {
+                            this.props.deleteRally();
+                          },
+                          style: "destructive"
+                        }
+                      ],
+                      {
+                        cancelable: false
+                      }
+                    );
+                  }}
+                  color={"red"}
+                />
+              </View>
+            ) : this.props.selectedLocation ? (
               <LocationDetails
                 isWithinRange={this.props.isWithinRange}
                 selectedLocation={this.props.selectedLocation}
@@ -82,6 +118,7 @@ export default class RallyDetails extends React.Component {
             ) : (
               <View style={styles.placeholder}>
                 <Text style={styles.title}>Select a location!</Text>
+                <Text>Expires {moment(this.props.expiryTime).fromNow()}</Text>
               </View>
             )}
           </View>
@@ -120,7 +157,7 @@ export default class RallyDetails extends React.Component {
                         },
                         isStampCollected: true
                       });
-                    }, 1800);
+                    }, this.props.PANEL_DELAY);
                   }}
                   underlayColor={"white"}
                 >
@@ -184,7 +221,11 @@ const styles = StyleSheet.create({
 
 RallyDetails.propTypes = {
   isWithinRange: PropTypes.bool,
+  isCompleted: PropTypes.bool.isRequired,
   selectedLocation: PropTypes.object,
   collectStamp: PropTypes.func,
-  distanceToStamp: PropTypes.number
+  deleteRally: PropTypes.func.isRequired,
+  distanceToStamp: PropTypes.number,
+  expiryTime: PropTypes.string.isRequired,
+  PANEL_DELAY: PropTypes.number.isRequired
 };

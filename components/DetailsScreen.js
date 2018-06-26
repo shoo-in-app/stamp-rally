@@ -8,11 +8,14 @@ import {
   Alert,
   Dimensions,
   Image,
-  Platform
+  Platform,
+  Text,
+  Modal
 } from "react-native";
-import { Location, Permissions } from "expo";
 import axios from "axios";
 import { Header } from "react-navigation";
+
+import moment from "moment";
 
 import uncollectedStampImg from "../assets/markers/stamp-uncollected-small.png";
 import collectedStampImg from "../assets/markers/stamp-collected-small.png";
@@ -22,14 +25,22 @@ let timeoutID;
 
 const { height } = Dimensions.get("window");
 
+const PANEL_DELAY = 1800;
+
 class DetailsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.mapRef = null;
 
     this.rallyID = this.props.navigation.getParam("rallyID", null);
+    this.expiryTime = this.props.navigation.getParam("expiryTime");
+    this.rewardPoints = this.props.navigation.getParam("rewardPoints");
     this.locations = this.props.navigation.getParam("locations", []);
     this.reloadData = this.props.navigation.getParam("reloadData");
+    this.userLocation = this.props.navigation.getParam("userLocation");
+    this.isLocationPermissionGranted = this.props.navigation.getParam(
+      "isLocationPermissionGranted"
+    );
 
     this.markerIDs = [];
     this.markers = this.locations.map((location, index) => {
@@ -80,10 +91,13 @@ class DetailsScreen extends React.Component {
       isWithinRange: true,
       userLocation: null,
       isRallyChosen: this.locations[0].visited !== undefined,
-      distanceToSelectedLocation: null
+      distanceToSelectedLocation: null,
+      isModalVisible: false,
+      totalVisited: this.locations.filter((location) => location.visited).length
     };
 
     this.collectStamp = this.collectStamp.bind(this);
+    this.deleteRally = this.deleteRally.bind(this);
   }
 
   collectStamp(locationId) {
@@ -136,11 +150,21 @@ class DetailsScreen extends React.Component {
             selectedLocation: {
               ...oldState.selectedLocation,
               visited: true
-            }
+            },
+            totalVisited: oldState.totalVisited + 1
           };
 
           return newState;
         });
+      })
+      .then(() => {
+        if (this.state.totalVisited >= this.locations.length) {
+          new Promise((resolve) => {
+            setTimeout(resolve, 1800);
+          }).then(() => {
+            this.setState({ isModalVisible: true });
+          });
+        }
       })
       .catch(() => {
         Alert.alert(
@@ -161,19 +185,7 @@ class DetailsScreen extends React.Component {
   };
 
   componentDidMount() {
-    this._getLocationAsync();
-    timeoutID = setTimeout(() => {
-      this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
-    }, 50);
-  }
-
-  componentWillUnmount() {
-    if (timeoutID) clearTimeout(timeoutID);
-  }
-
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
+    if (!this.isLocationPermissionGranted) {
       Alert.alert(
         "Location Permissions Denied",
         "You must grant location permission to this app in order to collect stamps.",
@@ -188,28 +200,14 @@ class DetailsScreen extends React.Component {
       );
       return;
     }
+    timeoutID = setTimeout(() => {
+      this.mapRef.fitToSuppliedMarkers(this.markerIDs, false);
+    }, 50);
+  }
 
-    await Location.watchPositionAsync(
-      {
-        enableHighAccuracy: true,
-        distanceInterval: 1,
-        timeInterval: 200
-      },
-      (location) => {
-        const userLocation = (
-          <MapView.Marker
-            key={"userLocation"}
-            identifier={location.identifier}
-            coordinate={location.coords}
-            title="Your location"
-            description="This is your current location"
-            pinColor="blue"
-          />
-        );
-        this.setState({ userLocation });
-      }
-    );
-  };
+  componentWillUnmount() {
+    if (timeoutID) clearTimeout(timeoutID);
+  }
 
   distanceToStamp(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
@@ -231,7 +229,7 @@ class DetailsScreen extends React.Component {
 
     if (this.isRallyChosen) return;
     // user location marker
-    const userCoords = this.state.userLocation.props.coordinate;
+    const userCoords = this.userLocation.props.coordinate;
     // the other location markers
     const distanceToStamp = this.distanceToStamp(
       location.lat,
@@ -245,9 +243,85 @@ class DetailsScreen extends React.Component {
     return distanceToStamp < COLLECTION_RANGE;
   }
 
+  deleteRally() {
+    axios
+      .patch(
+        `https://cc4-flower.herokuapp.com/mobile-api/rally/${
+          this.props.userID
+        }/${this.rallyID}`,
+        {
+          chosen: false
+        }
+      )
+      .then(() => {
+        this.reloadData();
+        this.props.navigation.navigate("Home");
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.alert(
+          "Connection error",
+          "There is a problem with the internet connection. Please try again later.",
+          [{ text: "OK", onPress: () => {} }]
+        );
+      });
+  }
+
   render() {
     return (
       <View style={{ flex: 1, flexDirection: "column" }}>
+        <Modal
+          animationType="fade"
+          visible={this.state.isModalVisible}
+          transparent={true}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              width: "80%",
+              alignSelf: "center",
+              marginTop: height / 2,
+              padding: 10,
+              borderRadius: 5
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                marginBottom: 5
+              }}
+            >
+              Rally complete!
+            </Text>
+            <Text>You got {this.rewardPoints} points!</Text>
+            <Button
+              title="Dismiss"
+              onPress={() => {
+                this.props.addUserExp(this.rewardPoints);
+                this.setState({ isModalVisible: false });
+                axios
+                  .patch(
+                    `https://cc4-flower.herokuapp.com/mobile-api/exp/${
+                      this.props.userID
+                    }`,
+                    {
+                      exp: this.rewardPoints
+                    }
+                  )
+                  .catch((err) => {
+                    console.log(err);
+                    Alert.alert(
+                      "Connection error",
+                      "There is a problem with the internet connection. Please try again later.",
+                      [{ text: "OK", onPress: () => {} }]
+                    );
+                  });
+                this.props.navigation.navigate("Home");
+              }}
+            />
+          </View>
+        </Modal>
         <MapView
           style={styles.map}
           ref={(ref) => {
@@ -255,7 +329,7 @@ class DetailsScreen extends React.Component {
           }}
         >
           {this.state.markers}
-          {this.state.userLocation}
+          {this.userLocation}
         </MapView>
         {this.state.isRallyChosen ? (
           <RallyDetails
@@ -263,11 +337,15 @@ class DetailsScreen extends React.Component {
             isWithinRange={this.state.isWithinRange}
             collectStamp={this.collectStamp}
             distanceToStamp={this.state.distanceToSelectedLocation}
+            expiryTime={this.expiryTime}
+            PANEL_DELAY={PANEL_DELAY}
+            isCompleted={this.state.totalVisited >= this.locations.length}
+            deleteRally={this.deleteRally}
           />
         ) : (
           <View style={styles.chooseContainer}>
             <Button
-              title="Choose this Rally"
+              title="Choose Rally"
               color="#A61414"
               onPress={() => {
                 axios
@@ -285,6 +363,7 @@ class DetailsScreen extends React.Component {
                   });
               }}
             />
+            <Text>Expires {moment(this.expiryTime).fromNow()}</Text>
           </View>
         )}
       </View>
@@ -309,5 +388,6 @@ const styles = StyleSheet.create({
 export default DetailsScreen;
 
 DetailsScreen.propTypes = {
-  userID: PropTypes.string
+  userID: PropTypes.string,
+  addUserExp: PropTypes.func.isRequired
 };

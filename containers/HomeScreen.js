@@ -11,7 +11,8 @@ const mapStateToProps = (state) => {
   return {
     chosenRallies: state.chosenRallies,
     notChosenRallies: state.notChosenRallies,
-    userID: state.userID
+    userID: state.userID,
+    userExp: state.userExp
   };
 };
 
