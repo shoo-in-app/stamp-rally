@@ -12,6 +12,8 @@ import {
 import { ListItem } from "react-native-elements";
 import { Location, Permissions, MapView } from "expo";
 
+import moment from "moment";
+
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -227,6 +229,7 @@ export default class HomeScreen extends React.Component {
               title: "Your Rallies",
               data: this.props.chosenRallies
                 .filter((rally) => !rally.complete)
+                .filter((rally) => moment(rally.end_datetime).isAfter())
                 .sort((a, b) => {
                   if (a.end_datetime < b.end_datetime) return -1;
                   if (a.end_datetime > b.end_datetime) return 1;
@@ -235,29 +238,38 @@ export default class HomeScreen extends React.Component {
             },
             {
               title: "Available Rallies",
-              data: this.props.notChosenRallies.sort((a, b) => {
-                if (!this.state.userLocation) return 0;
-                if (
-                  this.distanceToUser(
-                    a.lat,
-                    a.lng,
-                    this.state.userLocation.props.coordinate.latitude,
-                    this.state.userLocation.props.coordinate.longitude
-                  ) <
-                  this.distanceToUser(
-                    b.lat,
-                    b.lng,
-                    this.state.userLocation.props.coordinate.latitude,
-                    this.state.userLocation.props.coordinate.longitude
+              data: this.props.notChosenRallies
+                .filter((rally) => moment(rally.end_datetime).isAfter())
+                .sort((a, b) => {
+                  if (!this.state.userLocation) return 0;
+                  if (
+                    this.distanceToUser(
+                      a.lat,
+                      a.lng,
+                      this.state.userLocation.props.coordinate.latitude,
+                      this.state.userLocation.props.coordinate.longitude
+                    ) <
+                    this.distanceToUser(
+                      b.lat,
+                      b.lng,
+                      this.state.userLocation.props.coordinate.latitude,
+                      this.state.userLocation.props.coordinate.longitude
+                    )
                   )
-                )
-                  return -1;
-                else return 1;
-              })
+                    return -1;
+                  else return 1;
+                })
             },
             {
               title: "Completed Rallies",
               data: this.props.chosenRallies.filter((rally) => rally.complete)
+            },
+            {
+              title: "Expired Rallies",
+              data: this.props.chosenRallies.filter(
+                (rally) =>
+                  moment(rally.end_datetime).isBefore() && !rally.complete
+              )
             }
           ]}
           style={{ backgroundColor: "white" }}

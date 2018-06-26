@@ -7,12 +7,12 @@ import {
   Dimensions,
   TouchableHighlight,
   Image,
-  Button
+  Button,
+  Alert
 } from "react-native";
 import { Header } from "react-navigation";
 
 import moment from "moment";
-import axios from "axios";
 
 import LocationDetails from "./LocationDetails";
 
@@ -77,13 +77,33 @@ export default class RallyDetails extends React.Component {
       >
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
-            {this.props.isCompleted ? (
+            {this.props.isCompleted ||
+            moment(this.props.expiryTime).isBefore() ? (
               <View style={styles.placeholder}>
-                <Text style={styles.title}>Rally Complete!</Text>
+                <Text style={styles.title}>
+                  Rally
+                  {this.props.isCompleted ? " Complete" : " Expired"}!
+                </Text>
                 <Button
-                  title="DELETE RALLY"
+                  title="Delete Rally"
                   onPress={() => {
-                    this.props.deleteRally();
+                    Alert.alert(
+                      "Delete Rally",
+                      "Are you sure you wish to delete this rally? Your progress will be lost.",
+                      [
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Delete",
+                          onPress: () => {
+                            this.props.deleteRally();
+                          },
+                          style: "destructive"
+                        }
+                      ],
+                      {
+                        cancelable: false
+                      }
+                    );
                   }}
                   color={"red"}
                 />

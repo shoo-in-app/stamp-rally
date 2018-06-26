@@ -345,7 +345,7 @@ class DetailsScreen extends React.Component {
         ) : (
           <View style={styles.chooseContainer}>
             <Button
-              title="Choose this Rally"
+              title="Choose Rally"
               color="#A61414"
               onPress={() => {
                 axios
