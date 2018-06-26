@@ -90,6 +90,7 @@ export default class HomeScreen extends React.Component {
             title: data.item.title,
             locations: data.item.locations,
             expiryTime: data.item.end_datetime,
+            rewardPoints: data.item.reward_points,
             reloadData: this.reloadData,
             userLocation: this.state.userLocation,
             isLocationPermissionGranted: this.state.isLocationPermissionGranted

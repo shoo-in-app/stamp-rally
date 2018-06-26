@@ -34,6 +34,7 @@ class DetailsScreen extends React.Component {
 
     this.rallyID = this.props.navigation.getParam("rallyID", null);
     this.expiryTime = this.props.navigation.getParam("expiryTime");
+    this.rewardPoints = this.props.navigation.getParam("rewardPoints");
     this.locations = this.props.navigation.getParam("locations", []);
     this.reloadData = this.props.navigation.getParam("reloadData");
     this.userLocation = this.props.navigation.getParam("userLocation");
@@ -262,16 +263,36 @@ class DetailsScreen extends React.Component {
             <Text
               style={{
                 fontSize: 20,
-                fontWeight: "bold"
+                fontWeight: "bold",
+                marginBottom: 5
               }}
             >
               Rally complete!
             </Text>
-            <Text>You got XXX points!</Text>
+            <Text>You got {this.rewardPoints} points!</Text>
             <Button
               title="Dismiss"
               onPress={() => {
+                this.props.addUserExp(this.rewardPoints);
                 this.setState({ isModalVisible: false });
+                axios
+                  .patch(
+                    `https://cc4-flower.herokuapp.com/mobile-api/exp/${
+                      this.props.userID
+                    }`,
+                    {
+                      exp: this.rewardPoints
+                    }
+                  )
+                  .catch((err) => {
+                    console.log(err);
+                    Alert.alert(
+                      "Connection error",
+                      "There is a problem with the internet connection. Please try again later.",
+                      [{ text: "OK", onPress: () => {} }]
+                    );
+                  });
+                this.props.navigation.navigate("Home");
               }}
             />
           </View>
@@ -340,5 +361,6 @@ const styles = StyleSheet.create({
 export default DetailsScreen;
 
 DetailsScreen.propTypes = {
-  userID: PropTypes.string
+  userID: PropTypes.string,
+  addUserExp: PropTypes.func.isRequired
 };
