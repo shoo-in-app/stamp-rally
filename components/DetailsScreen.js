@@ -97,6 +97,7 @@ class DetailsScreen extends React.Component {
     };
 
     this.collectStamp = this.collectStamp.bind(this);
+    this.deleteRally = this.deleteRally.bind(this);
   }
 
   collectStamp(locationId) {
@@ -242,6 +243,30 @@ class DetailsScreen extends React.Component {
     return distanceToStamp < COLLECTION_RANGE;
   }
 
+  deleteRally() {
+    axios
+      .patch(
+        `https://cc4-flower.herokuapp.com/mobile-api/rally/${
+          this.props.userID
+        }/${this.rallyID}`,
+        {
+          chosen: false
+        }
+      )
+      .then(() => {
+        this.reloadData();
+        this.props.navigation.navigate("Home");
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.alert(
+          "Connection error",
+          "There is a problem with the internet connection. Please try again later.",
+          [{ text: "OK", onPress: () => {} }]
+        );
+      });
+  }
+
   render() {
     return (
       <View style={{ flex: 1, flexDirection: "column" }}>
@@ -314,6 +339,8 @@ class DetailsScreen extends React.Component {
             distanceToStamp={this.state.distanceToSelectedLocation}
             expiryTime={this.expiryTime}
             PANEL_DELAY={PANEL_DELAY}
+            isCompleted={this.state.totalVisited >= this.locations.length}
+            deleteRally={this.deleteRally}
           />
         ) : (
           <View style={styles.chooseContainer}>

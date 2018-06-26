@@ -6,11 +6,13 @@ import {
   View,
   Dimensions,
   TouchableHighlight,
-  Image
+  Image,
+  Button
 } from "react-native";
 import { Header } from "react-navigation";
 
 import moment from "moment";
+import axios from "axios";
 
 import LocationDetails from "./LocationDetails";
 
@@ -75,7 +77,18 @@ export default class RallyDetails extends React.Component {
       >
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
-            {this.props.selectedLocation ? (
+            {this.props.isCompleted ? (
+              <View style={styles.placeholder}>
+                <Text style={styles.title}>Rally Complete!</Text>
+                <Button
+                  title="DELETE RALLY"
+                  onPress={() => {
+                    this.props.deleteRally();
+                  }}
+                  color={"red"}
+                />
+              </View>
+            ) : this.props.selectedLocation ? (
               <LocationDetails
                 isWithinRange={this.props.isWithinRange}
                 selectedLocation={this.props.selectedLocation}
@@ -188,8 +201,10 @@ const styles = StyleSheet.create({
 
 RallyDetails.propTypes = {
   isWithinRange: PropTypes.bool,
+  isCompleted: PropTypes.bool.isRequired,
   selectedLocation: PropTypes.object,
   collectStamp: PropTypes.func,
+  deleteRally: PropTypes.func.isRequired,
   distanceToStamp: PropTypes.number,
   expiryTime: PropTypes.string.isRequired,
   PANEL_DELAY: PropTypes.number.isRequired
