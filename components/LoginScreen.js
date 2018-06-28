@@ -39,6 +39,7 @@ export default class LoginScreen extends React.Component {
             .post("https://cc4-flower.herokuapp.com/mobile-api/user", body)
             .then((res) => {
               this.props.setUserID(res.data.userId);
+              this.props.setUserExp(res.data.exp);
               this.props.navigation.navigate("Home");
             })
             .catch(() => {
@@ -89,5 +90,6 @@ const styles = StyleSheet.create({
 
 LoginScreen.propTypes = {
   userID: PropTypes.string,
-  setUserID: PropTypes.func.isRequired
+  setUserID: PropTypes.func.isRequired,
+  setUserExp: PropTypes.func.isRequired
 };
