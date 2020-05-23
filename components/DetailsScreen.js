@@ -10,7 +10,7 @@ import {
   Image,
   Platform,
   Text,
-  Modal
+  Modal,
 } from "react-native";
 import axios from "axios";
 import { Header } from "react-navigation";
@@ -51,7 +51,7 @@ class DetailsScreen extends React.Component {
           key={location.id.toString()}
           coordinate={{
             latitude: location.lat,
-            longitude: location.lng
+            longitude: location.lng,
           }}
           title={location.title}
           description={location.description}
@@ -66,7 +66,7 @@ class DetailsScreen extends React.Component {
             this.setState({
               selectedLocation: location,
               isWithinRange: this.isWithinRange(location),
-              selectedLocationIndex: index
+              selectedLocationIndex: index,
             });
           }}
         >
@@ -93,7 +93,8 @@ class DetailsScreen extends React.Component {
       isRallyChosen: this.locations[0].visited !== undefined,
       distanceToSelectedLocation: null,
       isModalVisible: false,
-      totalVisited: this.locations.filter((location) => location.visited).length
+      totalVisited: this.locations.filter((location) => location.visited)
+        .length,
     };
 
     this.collectStamp = this.collectStamp.bind(this);
@@ -103,11 +104,9 @@ class DetailsScreen extends React.Component {
   collectStamp(locationId) {
     axios
       .patch(
-        `https://cc4-flower.herokuapp.com/mobile-api/location/${
-          this.props.userID
-        }/${locationId}`,
+        `https://cc4-flower.herokuapp.com/mobile-api/location/${this.props.userID}/${locationId}`,
         {
-          visited: true
+          visited: true,
         }
       )
       .then(() => {
@@ -121,14 +120,14 @@ class DetailsScreen extends React.Component {
               key={this.state.selectedLocation.id.toString()}
               coordinate={{
                 latitude: this.state.selectedLocation.lat,
-                longitude: this.state.selectedLocation.lng
+                longitude: this.state.selectedLocation.lng,
               }}
               title={this.state.selectedLocation.title}
               description={this.state.selectedLocation.description}
               image={Platform.OS === "android" ? collectedStampImg : undefined}
               onPress={() => {
                 this.setState({
-                  selectedLocation: thisLocation
+                  selectedLocation: thisLocation,
                 });
               }}
             >
@@ -145,13 +144,13 @@ class DetailsScreen extends React.Component {
             markers: [
               ...oldState.markers.slice(0, oldState.selectedLocationIndex),
               newMarker,
-              ...oldState.markers.slice(oldState.selectedLocationIndex + 1)
+              ...oldState.markers.slice(oldState.selectedLocationIndex + 1),
             ],
             selectedLocation: {
               ...oldState.selectedLocation,
-              visited: true
+              visited: true,
             },
-            totalVisited: oldState.totalVisited + 1
+            totalVisited: oldState.totalVisited + 1,
           };
 
           return newState;
@@ -179,8 +178,8 @@ class DetailsScreen extends React.Component {
       title: navigation.getParam("title", "Rally Details"),
       headerTitleStyle: {
         fontFamily: "edo",
-        fontSize: 18
-      }
+        fontSize: 18,
+      },
     };
   };
 
@@ -194,8 +193,8 @@ class DetailsScreen extends React.Component {
             text: "OK",
             onPress: () => {
               this.props.navigation.navigate("Home");
-            }
-          }
+            },
+          },
         ]
       );
       return;
@@ -246,11 +245,9 @@ class DetailsScreen extends React.Component {
   deleteRally() {
     axios
       .patch(
-        `https://cc4-flower.herokuapp.com/mobile-api/rally/${
-          this.props.userID
-        }/${this.rallyID}`,
+        `https://cc4-flower.herokuapp.com/mobile-api/rally/${this.props.userID}/${this.rallyID}`,
         {
-          chosen: false
+          chosen: false,
         }
       )
       .then(() => {
@@ -282,14 +279,14 @@ class DetailsScreen extends React.Component {
               alignSelf: "center",
               marginTop: height / 2,
               padding: 10,
-              borderRadius: 5
+              borderRadius: 5,
             }}
           >
             <Text
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                marginBottom: 5
+                marginBottom: 5,
               }}
             >
               Rally complete!
@@ -302,11 +299,9 @@ class DetailsScreen extends React.Component {
                 this.setState({ isModalVisible: false });
                 axios
                   .patch(
-                    `https://cc4-flower.herokuapp.com/mobile-api/exp/${
-                      this.props.userID
-                    }`,
+                    `https://cc4-flower.herokuapp.com/mobile-api/exp/${this.props.userID}`,
                     {
-                      exp: this.rewardPoints
+                      exp: this.rewardPoints,
                     }
                   )
                   .catch((err) => {
@@ -346,15 +341,13 @@ class DetailsScreen extends React.Component {
           <View style={styles.chooseContainer}>
             <Button
               title="Choose Rally"
-              color="#A61414"
+              titleStyle={{ color: "#A61414" }}
               onPress={() => {
                 axios
                   .patch(
-                    `https://cc4-flower.herokuapp.com/mobile-api/rally/${
-                      this.props.userID
-                    }/${this.rallyID}`,
+                    `https://cc4-flower.herokuapp.com/mobile-api/rally/${this.props.userID}/${this.rallyID}`,
                     {
-                      chosen: true
+                      chosen: true,
                     }
                   )
                   .then(() => {
@@ -377,17 +370,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   mapMarkerImage: {
     height: 48,
-    width: 48
-  }
+    width: 48,
+  },
 });
 
 export default DetailsScreen;
 
 DetailsScreen.propTypes = {
   userID: PropTypes.string,
-  addUserExp: PropTypes.func.isRequired
+  addUserExp: PropTypes.func.isRequired,
 };

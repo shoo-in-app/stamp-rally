@@ -24,13 +24,13 @@ export default class LocationDetails extends React.Component {
             disabled={
               this.props.selectedLocation.visited || !this.props.isWithinRange
             }
-            color="#A61414"
-            textStyle={{
-              fontFamily: "edo"
-            }}
             title={
               this.props.selectedLocation.visited ? "COLLECTED!" : "COLLECT"
             }
+            titleStyle={{
+              color: "#A61414"
+              fontFamily: "edo",
+            }}
             onPress={this.props.maximiseStampPad}
           />
         </View>
@@ -43,39 +43,39 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   description: {
     fontSize: 15,
-    margin: 5
+    margin: 5,
   },
   stampDescription: {
-    justifyContent: "space-around"
+    justifyContent: "space-around",
   },
   stampDetails: {
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
   },
   stampInfo: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    margin: 5
+    margin: 5,
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    margin: 5
+    margin: 5,
   },
   titleInfo: {
     flexDirection: "column",
-    justifyContent: "space-around"
-  }
+    justifyContent: "space-around",
+  },
 });
 
 LocationDetails.propTypes = {
   isWithinRange: PropTypes.bool.isRequired,
   selectedLocation: PropTypes.object.isRequired,
   distanceToStamp: PropTypes.number.isRequired,
-  maximiseStampPad: PropTypes.func.isRequired
+  maximiseStampPad: PropTypes.func.isRequired,
 };

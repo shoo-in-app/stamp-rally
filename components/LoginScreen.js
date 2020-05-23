@@ -28,12 +28,12 @@ export default class LoginScreen extends React.Component {
         "309418440628-t2gt9pl1cbtu4jr5crbb836fqj4nsa13.apps.googleusercontent.com",
       iosStandaloneAppClientId:
         "309418440628-ugqaajesnefhkjt4h6e5o308144jecgc.apps.googleusercontent.com",
-      scopes: ["profile", "email"]
+      scopes: ["profile", "email"],
     })
       .then((result) => {
         if (result.type === "success") {
           const body = {
-            email: result.user.email
+            email: result.user.email,
           };
           axios
             .post("https://cc4-flower.herokuapp.com/mobile-api/user", body)
@@ -66,7 +66,7 @@ export default class LoginScreen extends React.Component {
         <Text>{this.state.cancelled ? "Login failed." : ""}</Text>
         <Button
           title="Login with Google"
-          color="#A61414"
+          titleStyle={{ color: "#A61414" }}
           onPress={() => this.login()}
         />
       </View>
@@ -79,17 +79,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   logo: {
     height: 200,
     width: 200,
-    margin: 20
-  }
+    margin: 20,
+  },
 });
 
 LoginScreen.propTypes = {
   userID: PropTypes.string,
   setUserID: PropTypes.func.isRequired,
-  setUserExp: PropTypes.func.isRequired
+  setUserExp: PropTypes.func.isRequired,
 };

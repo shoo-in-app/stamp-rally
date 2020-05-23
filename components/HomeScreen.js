@@ -7,7 +7,7 @@ import {
   Alert,
   Platform,
   Text,
-  View
+  View,
 } from "react-native";
 import { ListItem } from "react-native-elements";
 import { Location, Permissions, MapView } from "expo";
@@ -21,7 +21,7 @@ export default class HomeScreen extends React.Component {
       refreshing: false,
       userLocation: null,
       isLocationPermissionGranted: true,
-      isReady: false
+      isReady: false,
     };
 
     this.reloadData = this.reloadData.bind(this);
@@ -32,17 +32,17 @@ export default class HomeScreen extends React.Component {
     const logoutButton = (
       <Button
         title="Logout"
+        titleStyle={{ color: Platform.OS === "ios" ? "#fff" : "#D41919" }}
         onPress={() => {
           params.navigate("Login");
           params.clearCacheOnLogout();
         }}
-        color={Platform.OS === "ios" ? "#fff" : "#D41919"}
       />
     );
     return {
       title: "Stamp Rallies",
       headerLeft: null,
-      headerRight: logoutButton
+      headerRight: logoutButton,
     };
   };
 
@@ -54,7 +54,7 @@ export default class HomeScreen extends React.Component {
   reloadData() {
     this.props.navigation.setParams({
       clearCacheOnLogout: this.props.clearCacheOnLogout,
-      navigate: this.props.navigation.navigate.bind(this)
+      navigate: this.props.navigation.navigate.bind(this),
     });
     fetch(
       `https://cc4-flower.herokuapp.com/mobile-api/rallies/${this.props.userID}`
@@ -95,7 +95,7 @@ export default class HomeScreen extends React.Component {
             rewardPoints: data.item.reward_points,
             reloadData: this.reloadData,
             userLocation: this.state.userLocation,
-            isLocationPermissionGranted: this.state.isLocationPermissionGranted
+            isLocationPermissionGranted: this.state.isLocationPermissionGranted,
           })
         }
         subtitle={data.item.description}
@@ -103,8 +103,8 @@ export default class HomeScreen extends React.Component {
           value: `${progress}/${total}`,
           containerStyle: {
             marginTop: 0,
-            backgroundColor
-          }
+            backgroundColor,
+          },
         }}
         containerStyle={{ backgroundColor: "white" }}
       />
@@ -122,7 +122,7 @@ export default class HomeScreen extends React.Component {
       {
         enableHighAccuracy: true,
         distanceInterval: 1,
-        timeInterval: 200
+        timeInterval: 200,
       },
       (location) => {
         const userLocation = (
@@ -189,7 +189,7 @@ export default class HomeScreen extends React.Component {
             color: "white",
             textAlign: "center",
             fontSize: 16,
-            padding: 5
+            padding: 5,
           }}
         >
           You have {this.props.userExp} points!
@@ -206,7 +206,7 @@ export default class HomeScreen extends React.Component {
                     backgroundColor: "#A61414",
                     paddingLeft: 10,
                     paddingTop: 5,
-                    paddingBottom: 5
+                    paddingBottom: 5,
                   }}
                 >
                   {title}
@@ -234,7 +234,7 @@ export default class HomeScreen extends React.Component {
                   if (a.end_datetime < b.end_datetime) return -1;
                   if (a.end_datetime > b.end_datetime) return 1;
                   else return 0;
-                })
+                }),
             },
             {
               title: "Available Rallies",
@@ -258,19 +258,19 @@ export default class HomeScreen extends React.Component {
                   )
                     return -1;
                   else return 1;
-                })
+                }),
             },
             {
               title: "Completed Rallies",
-              data: this.props.chosenRallies.filter((rally) => rally.complete)
+              data: this.props.chosenRallies.filter((rally) => rally.complete),
             },
             {
               title: "Expired Rallies",
               data: this.props.chosenRallies.filter(
                 (rally) =>
                   moment(rally.end_datetime).isBefore() && !rally.complete
-              )
-            }
+              ),
+            },
           ]}
           style={{ backgroundColor: "white" }}
         />
@@ -291,5 +291,5 @@ HomeScreen.propTypes = {
   loadNotChosenRallies: PropTypes.func.isRequired,
   chosenRallies: PropTypes.array.isRequired,
   notChosenRallies: PropTypes.array.isRequired,
-  clearCacheOnLogout: PropTypes.func.isRequired
+  clearCacheOnLogout: PropTypes.func.isRequired,
 };
