@@ -9,7 +9,7 @@ import {
   Image,
   Button,
   Alert,
-  Platform
+  Platform,
 } from "react-native";
 import { Header } from "react-navigation";
 
@@ -35,15 +35,15 @@ export default class RallyDetails extends React.Component {
     this.state = {
       draggableRange: {
         top: MIN_PANEL,
-        bottom: MIN_PANEL
+        bottom: MIN_PANEL,
       },
       bigStampStyle: {
         height: 0,
-        width: 0
+        width: 0,
       },
       isStampCollected: true,
       isStampPadEnabled: false,
-      isModalVisible: false
+      isModalVisible: false,
     };
 
     this.maximiseStampPad = this.maximiseStampPad.bind(this);
@@ -53,8 +53,8 @@ export default class RallyDetails extends React.Component {
     this.setState({
       draggableRange: {
         top: MAX_PANEL,
-        bottom: MIN_PANEL
-      }
+        bottom: MIN_PANEL,
+      },
     });
   }
 
@@ -87,6 +87,7 @@ export default class RallyDetails extends React.Component {
                 </Text>
                 <Button
                   title="Delete Rally"
+                  titleStyle={{ color: "red" }}
                   onPress={() => {
                     Alert.alert(
                       "Delete Rally",
@@ -98,15 +99,14 @@ export default class RallyDetails extends React.Component {
                           onPress: () => {
                             this.props.deleteRally();
                           },
-                          style: "destructive"
-                        }
+                          style: "destructive",
+                        },
                       ],
                       {
-                        cancelable: false
+                        cancelable: false,
                       }
                     );
                   }}
-                  color={"red"}
                 />
               </View>
             ) : this.props.selectedLocation ? (
@@ -143,10 +143,10 @@ export default class RallyDetails extends React.Component {
                         left: event.nativeEvent.locationX - SIZE / 2,
                         top: event.nativeEvent.locationY - SIZE / 2,
                         zIndex: -50,
-                        position: "absolute"
+                        position: "absolute",
                       },
                       isStampPadEnabled: false,
-                      isStampCollected: false
+                      isStampCollected: false,
                     });
                     this.props.collectStamp(this.props.selectedLocation.id);
                     slideDownTimeoutId = setTimeout(() => {
@@ -154,9 +154,9 @@ export default class RallyDetails extends React.Component {
                       this.setState({
                         bigStampStyle: {
                           height: 0,
-                          width: 0
+                          width: 0,
                         },
-                        isStampCollected: true
+                        isStampCollected: true,
                       });
                     }, this.props.PANEL_DELAY);
                   }}
@@ -182,22 +182,22 @@ const styles = StyleSheet.create({
   panelBody: {
     height: height - Header.HEIGHT - 240,
     backgroundColor: "#A61414",
-    zIndex: 20
+    zIndex: 20,
   },
   placeholder: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   panelHeader: {
     height: 120,
     backgroundColor: "white",
-    zIndex: 200
+    zIndex: 200,
   },
   panel: {
     flex: 1,
     backgroundColor: "white",
-    position: "relative"
+    position: "relative",
   },
   stampPad: {
     flex: 1,
@@ -206,18 +206,18 @@ const styles = StyleSheet.create({
     width: width - 20,
     margin: 10,
     backgroundColor: "white",
-    zIndex: -20
+    zIndex: -20,
   },
   stampPadTitle: {
     marginTop: 5,
     fontSize: 24,
-    color: "white"
+    color: "white",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    margin: 5
-  }
+    margin: 5,
+  },
 });
 
 RallyDetails.propTypes = {
@@ -228,5 +228,5 @@ RallyDetails.propTypes = {
   deleteRally: PropTypes.func.isRequired,
   distanceToStamp: PropTypes.number,
   expiryTime: PropTypes.string.isRequired,
-  PANEL_DELAY: PropTypes.number.isRequired
+  PANEL_DELAY: PropTypes.number.isRequired,
 };
